@@ -37,17 +37,34 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={lang}>
       <head>
         <meta name="description" content={description[lang]} />
-        <link rel="icon" type="image/png" href="/images/favicon.png" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="alternate icon" type="image/png" href="/images/favicon.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <WebSiteSchema lang={lang} />
         <OrganizationSchema />
         <SoftwareApplicationSchema />
       </head>
-      <body>
-        <div className="font-m-plus-rounded-1c bg-primary-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 min-h-screen flex flex-col">
+      <body className="bg-ground text-ink antialiased">
+        <div className="relative min-h-screen flex flex-col">
+          {/* spine stripe — a thin shu rule pinned to the right edge with the
+              package family written vertically inside it. Like the spine of a
+              book sitting on the page. Hidden on small screens to avoid
+              overlapping body content. */}
+          <div
+            aria-hidden="true"
+            className="hidden md:flex fixed top-0 bottom-0 right-0 z-30 w-6 bg-shu items-end justify-center pb-6 pointer-events-none"
+          >
+            <span
+              className="font-mono text-[10px] text-ground tracking-[0.3em] uppercase select-none"
+              style={{ writingMode: "vertical-rl" }}
+            >
+              @love-rox / tcy
+            </span>
+          </div>
+
           <Header lang={lang} navItems={navItems} />
-          <main className="*:min-h-64 lg:min-h-svh flex-1">{children}</main>
+          <main className="flex-1 *:min-h-64 lg:min-h-svh">{children}</main>
           <Footer lang={lang} />
         </div>
       </body>

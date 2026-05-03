@@ -4,17 +4,17 @@ import { extractParams, pickTitleFontSize } from "../src/lib/og-helpers";
 describe("extractParams", () => {
   test("returns defaults when no input", () => {
     expect(extractParams(undefined)).toEqual({
-      title: "Rox",
-      eyebrow: "Love-Rox Journal",
-      author: "Rox Developers",
+      title: "tate-chu-yoko",
+      eyebrow: "@love-rox/tcy-*",
+      author: "Love-Rox",
     });
   });
 
   test("returns defaults when input is not an object", () => {
     expect(extractParams("not an object")).toEqual({
-      title: "Rox",
-      eyebrow: "Love-Rox Journal",
-      author: "Rox Developers",
+      title: "tate-chu-yoko",
+      eyebrow: "@love-rox/tcy-*",
+      author: "Love-Rox",
     });
   });
 
@@ -33,8 +33,8 @@ describe("extractParams", () => {
     const input = { url: "https://example.com/api/og?title=OnlyTitle" };
     expect(extractParams(input)).toEqual({
       title: "OnlyTitle",
-      eyebrow: "Love-Rox Journal",
-      author: "Rox Developers",
+      eyebrow: "@love-rox/tcy-*",
+      author: "Love-Rox",
     });
   });
 
@@ -47,7 +47,7 @@ describe("extractParams", () => {
     const sp = new URLSearchParams({ title: "Foo", author: "Bar" });
     expect(extractParams({ searchParams: sp })).toEqual({
       title: "Foo",
-      eyebrow: "Love-Rox Journal",
+      eyebrow: "@love-rox/tcy-*",
       author: "Bar",
     });
   });
@@ -70,9 +70,9 @@ describe("extractParams", () => {
 
   test("ignores non-string values in query object", () => {
     expect(extractParams({ query: { title: 42, eyebrow: null, author: undefined } })).toEqual({
-      title: "Rox",
-      eyebrow: "Love-Rox Journal",
-      author: "Rox Developers",
+      title: "tate-chu-yoko",
+      eyebrow: "@love-rox/tcy-*",
+      author: "Love-Rox",
     });
   });
 
@@ -86,7 +86,7 @@ describe("extractParams", () => {
 
 describe("pickTitleFontSize", () => {
   test("largest size for very short titles", () => {
-    expect(pickTitleFontSize("Rox")).toBe(128);
+    expect(pickTitleFontSize("tcy")).toBe(128);
     expect(pickTitleFontSize("12345678")).toBe(128);
   });
 

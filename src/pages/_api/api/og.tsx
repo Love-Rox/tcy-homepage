@@ -1,278 +1,289 @@
 import { ImageResponse } from "workers-og";
 import { env } from "cloudflare:workers";
-import fontUrl from "../../../../public/assets/fonts/m-plus-rounded-1c-japanese-700-normal.woff?url";
-import logoUrl from "../../../../public/assets/logos/svg/rox-horizontal.svg?url";
+import minchoUrl from "../../../../public/assets/fonts/shippori-mincho-b1-japanese-700-normal.woff?url";
+import monoUrl from "../../../../public/assets/fonts/jetbrains-mono-latin-500-normal.woff?url";
 import { extractParams, pickTitleFontSize } from "@/lib/og-helpers";
 
 export const getConfig = async () => {
   return { render: "dynamic" };
 };
 
-let fontData: ArrayBuffer | null = null;
-let logoSrc: string | null = null;
+// wa-modern OG card. Sumi ink on kinari paper, with shu vermilion as the
+// single warm accent. Mincho carries the title; Mono carries metadata. Echoes
+// the site identity (right-edge spine stripe, hairline rules, 落款 seal).
+
+const PALETTE = {
+  ground: "#f4ede2",
+  groundDeep: "#ebe2d2",
+  ink: "#1a1815",
+  inkMute: "#6b6358",
+  inkSoft: "#aaa093",
+  shu: "#c8442f",
+  shuDeep: "#a83626",
+};
+
+let minchoFont: ArrayBuffer | null = null;
+let monoFont: ArrayBuffer | null = null;
 
 async function fetchAsset(path: string): Promise<Response> {
   return env.ASSETS.fetch(new Request(`https://assets.local${path}`));
 }
 
-async function loadFont(): Promise<ArrayBuffer> {
-  if (fontData) return fontData;
-  const res = await fetchAsset(fontUrl);
-  if (!res.ok) throw new Error(`Failed to load font: ${res.status}`);
-  fontData = await res.arrayBuffer();
-  return fontData;
-}
-
-async function loadLogo(): Promise<string> {
-  if (logoSrc) return logoSrc;
-  const res = await fetchAsset(logoUrl);
-  if (!res.ok) throw new Error(`Failed to load logo: ${res.status}`);
-  const buf = new Uint8Array(await res.arrayBuffer());
-  let binary = "";
-  for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]!);
-  logoSrc = `data:image/svg+xml;base64,${btoa(binary)}`;
-  return logoSrc;
+async function loadFont(url: string): Promise<ArrayBuffer> {
+  const res = await fetchAsset(url);
+  if (!res.ok) throw new Error(`Failed to load font ${url}: ${res.status}`);
+  return res.arrayBuffer();
 }
 
 export default async function OGImage(input: unknown) {
   const { title, eyebrow, author } = extractParams(input);
-  const [font, logo] = await Promise.all([loadFont(), loadLogo()]);
+  const [mincho, mono] = await Promise.all([
+    minchoFont ?? (minchoFont = await loadFont(minchoUrl)),
+    monoFont ?? (monoFont = await loadFont(monoUrl)),
+  ]);
   const titleFontSize = pickTitleFontSize(title);
 
   return new ImageResponse(
     <div
       style={{
-        height: "100%",
         width: "100%",
+        height: "100%",
         display: "flex",
         position: "relative",
-        backgroundColor: "#fbf3e8",
+        backgroundColor: PALETTE.ground,
+        // Subtle paper grain
         backgroundImage:
-          "radial-gradient(circle at 18px 18px, rgba(26, 24, 21, 0.07) 1.1px, transparent 1.6px)",
-        backgroundSize: "36px 36px",
-        fontFamily: '"M PLUS Rounded 1c"',
-        color: "#1a1815",
+          "radial-gradient(circle at 1px 1px, rgba(26, 24, 21, 0.06) 1px, transparent 0)",
+        backgroundSize: "6px 6px",
+        fontFamily: '"Shippori Mincho B1", "JetBrains Mono"',
+        color: PALETTE.ink,
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 220,
-          display: "flex",
-          backgroundImage:
-            "linear-gradient(180deg, rgba(255, 91, 17, 0.07) 0%, rgba(255, 91, 17, 0) 100%)",
-        }}
-      />
-
+      {/* Right spine stripe — the same shu strip from the live site */}
       <div
         style={{
           position: "absolute",
           top: 0,
           right: 0,
           bottom: 0,
-          width: 16,
+          width: 18,
           display: "flex",
-          backgroundColor: "#ff5b11",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 32,
-          bottom: 0,
-          width: 2,
-          display: "flex",
-          backgroundColor: "rgba(255, 91, 17, 0.28)",
+          backgroundColor: PALETTE.shu,
         }}
       />
 
+      {/* Top hairline rule, full width */}
       <div
         style={{
           position: "absolute",
-          top: 56,
-          right: 56,
-          width: 14,
-          height: 14,
+          top: 60,
+          left: 80,
+          right: 60,
+          height: 1,
           display: "flex",
-          backgroundColor: "#ff5b11",
-          transform: "rotate(45deg)",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: 64,
-          right: 56,
-          width: 14,
-          height: 14,
-          display: "flex",
-          backgroundColor: "#1a1815",
-          transform: "rotate(45deg)",
+          backgroundColor: "rgba(26,24,21,0.16)",
         }}
       />
 
+      {/* Bottom hairline rule, full width */}
       <div
         style={{
+          position: "absolute",
+          bottom: 80,
+          left: 80,
+          right: 60,
+          height: 1,
           display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          padding: "70px 110px 60px 80px",
+          backgroundColor: "rgba(26,24,21,0.16)",
+        }}
+      />
+
+      {/* Wordmark line in the top margin: 縦中横 / tate-chu-yoko */}
+      <div
+        style={{
+          position: "absolute",
+          top: 32,
+          left: 80,
+          display: "flex",
+          alignItems: "baseline",
         }}
       >
+        <span
+          style={{
+            display: "flex",
+            fontSize: 22,
+            fontFamily: '"Shippori Mincho B1"',
+            fontWeight: 700,
+            color: PALETTE.ink,
+          }}
+        >
+          縦中横
+        </span>
+        <span
+          style={{
+            display: "flex",
+            width: 1,
+            height: 18,
+            backgroundColor: PALETTE.shu,
+            margin: "0 14px",
+          }}
+        />
+        <span
+          style={{
+            display: "flex",
+            fontSize: 14,
+            fontFamily: '"JetBrains Mono"',
+            color: PALETTE.inkMute,
+            letterSpacing: "0.18em",
+          }}
+        >
+          tate-chu-yoko
+        </span>
+      </div>
+
+      {/* Top-right metadata: tcy.love-rox.cc · MMXXVI */}
+      <div
+        style={{
+          position: "absolute",
+          top: 32,
+          right: 60,
+          display: "flex",
+          alignItems: "center",
+          fontSize: 12,
+          fontFamily: '"JetBrains Mono"',
+          color: PALETTE.inkSoft,
+          letterSpacing: "0.25em",
+          textTransform: "uppercase",
+        }}
+      >
+        <span style={{ display: "flex" }}>tcy.love-rox.cc</span>
+        <span style={{ display: "flex", margin: "0 12px", color: PALETTE.shu }}>·</span>
+        <span style={{ display: "flex" }}>MMXXVI</span>
+      </div>
+
+      {/* Body — eyebrow + title block */}
+      <div
+        style={{
+          position: "absolute",
+          left: 80,
+          right: 100,
+          top: 200,
+          bottom: 160,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        {/* Eyebrow with shu rule prefix */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <img src={logo} height={52} style={{ objectFit: "contain" }} />
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              fontSize: 18,
-              letterSpacing: "0.34em",
-              color: "#9b8a7a",
-              fontWeight: 700,
-              textTransform: "uppercase",
-            }}
-          >
-            <span style={{ display: "flex" }}>love-rox.cc</span>
-            <span style={{ display: "flex", margin: "0 14px" }}>/</span>
-            <span style={{ display: "flex" }}>MMXXVI</span>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", flex: 1 }} />
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: 30,
+            marginBottom: 28,
           }}
         >
           <div
             style={{
               display: "flex",
-              width: 60,
-              height: 4,
-              backgroundColor: "#ff5b11",
-              marginRight: 20,
+              width: 36,
+              height: 1,
+              backgroundColor: PALETTE.shu,
+              marginRight: 18,
             }}
           />
           <div
             style={{
               display: "flex",
-              fontSize: 20,
-              letterSpacing: "0.34em",
-              color: "#ff5b11",
+              fontSize: 16,
+              fontFamily: '"JetBrains Mono"',
+              color: PALETTE.shuDeep,
+              letterSpacing: "0.32em",
               textTransform: "uppercase",
-              fontWeight: 700,
+              fontWeight: 500,
             }}
           >
             {eyebrow}
           </div>
         </div>
 
+        {/* Title — Mincho display */}
         <div
           style={{
             display: "flex",
             fontSize: titleFontSize,
-            lineHeight: 1.08,
+            lineHeight: 1.1,
+            fontFamily: '"Shippori Mincho B1"',
             fontWeight: 700,
-            color: "#1a1815",
-            letterSpacing: "-0.01em",
-            maxWidth: 1000,
+            color: PALETTE.ink,
+            letterSpacing: "0.01em",
+            maxWidth: 980,
           }}
         >
           {title}
         </div>
+      </div>
 
-        <div style={{ display: "flex", flex: 1 }} />
+      {/* Bottom strip: author on the left, seal on the right */}
+      <div
+        style={{
+          position: "absolute",
+          left: 80,
+          right: 100,
+          bottom: 30,
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              fontSize: 11,
+              fontFamily: '"JetBrains Mono"',
+              color: PALETTE.inkSoft,
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              fontWeight: 500,
+              marginBottom: 6,
+            }}
+          >
+            Published
+          </div>
+          <div
+            style={{
+              display: "flex",
+              fontSize: 22,
+              fontFamily: '"Shippori Mincho B1"',
+              color: PALETTE.ink,
+              fontWeight: 700,
+            }}
+          >
+            {author}
+          </div>
+        </div>
 
+        {/* 縦中横 seal — small shu square with the three Kanji vertically */}
         <div
           style={{
             display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            width: "100%",
-            marginTop: 48,
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 56,
+            height: 56,
+            backgroundColor: PALETTE.shuDeep,
+            color: PALETTE.ground,
+            fontFamily: '"Shippori Mincho B1"',
+            fontWeight: 700,
+            fontSize: 14,
+            lineHeight: 1.05,
+            letterSpacing: "0.02em",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                fontSize: 14,
-                letterSpacing: "0.34em",
-                color: "#9b8a7a",
-                textTransform: "uppercase",
-                fontWeight: 700,
-                marginBottom: 6,
-              }}
-            >
-              Published by
-            </div>
-            <div
-              style={{
-                display: "flex",
-                fontSize: 28,
-                color: "#1a1815",
-                fontWeight: 700,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              {author}
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                fontSize: 14,
-                letterSpacing: "0.34em",
-                color: "#9b8a7a",
-                textTransform: "uppercase",
-                fontWeight: 700,
-                marginBottom: 8,
-              }}
-            >
-              <span style={{ display: "flex" }}>Misskey API</span>
-              <span style={{ display: "flex", margin: "0 10px" }}>·</span>
-              <span style={{ display: "flex" }}>Federated</span>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                fontSize: 18,
-                color: "#6b6058",
-                fontWeight: 700,
-                letterSpacing: "0.02em",
-              }}
-            >
-              The Lightweight ActivityPub Server
-            </div>
-          </div>
+          <span style={{ display: "flex" }}>縦</span>
+          <span style={{ display: "flex" }}>中</span>
+          <span style={{ display: "flex" }}>横</span>
         </div>
       </div>
     </div>,
@@ -280,12 +291,8 @@ export default async function OGImage(input: unknown) {
       width: 1200,
       height: 630,
       fonts: [
-        {
-          name: "M PLUS Rounded 1c",
-          data: font,
-          weight: 700,
-          style: "normal",
-        },
+        { name: "Shippori Mincho B1", data: mincho, weight: 700, style: "normal" },
+        { name: "JetBrains Mono", data: mono, weight: 500, style: "normal" },
       ],
     },
   );

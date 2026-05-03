@@ -5,9 +5,9 @@ export interface OGParams {
 }
 
 export function extractParams(input: unknown): OGParams {
-  let title = "Rox";
-  let eyebrow = "Love-Rox Journal";
-  let author = "Rox Developers";
+  let title = "tate-chu-yoko";
+  let eyebrow = "@love-rox/tcy-*";
+  let author = "Love-Rox";
   if (input && typeof input === "object") {
     const i = input as {
       url?: string;

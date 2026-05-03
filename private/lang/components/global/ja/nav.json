@@ -1,6 +1,6 @@
 {
   "items": [
-    { "name": "core", "href": "/" },
+    { "name": "縦中横", "href": "/" },
     { "name": "react", "href": "/react" },
     { "name": "vue", "href": "/vue" },
     { "name": "rehype", "href": "/rehype" },

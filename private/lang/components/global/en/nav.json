@@ -1,6 +1,6 @@
 {
   "items": [
-    { "name": "core", "href": "/en" },
+    { "name": "Overview", "href": "/en" },
     { "name": "react", "href": "/en/react" },
     { "name": "vue", "href": "/en/vue" },
     { "name": "rehype", "href": "/en/rehype" },

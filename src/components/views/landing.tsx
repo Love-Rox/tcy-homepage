@@ -1,19 +1,20 @@
 import { Link } from "waku";
-import { Meta } from "@/components/global/meta";
-import { Breadcrumbs, generateBreadcrumbItems } from "@/components/common/breadcrumbs";
-import { BreadcrumbSchema } from "@/components/seo/structured-data";
 import { Tcy } from "@love-rox/tcy-react";
+import { Meta } from "@/components/global/meta";
 import {
   ADAPTERS,
   Badge,
+  Cta,
   InlineMd,
   NewBadge,
   Prose,
   RECOMMENDED_CSS,
   Section,
   SnippetBlock,
+  stripMd,
 } from "@/components/tcy/shared";
 import { localePath, type Locale } from "@/lib/locale";
+import { VERSIONS } from "@/lib/versions";
 import langJa from "@private/lang/pages/ja/index.json";
 import langEn from "@private/lang/pages/en/index.json";
 
@@ -21,7 +22,7 @@ const data = { en: langEn, ja: langJa };
 
 const NPM_URL = "https://www.npmjs.com/package/@love-rox/tcy-core";
 const GITHUB_URL = "https://github.com/Love-Rox/tate-chu-yoko";
-const PREVIEW_SAMPLE = "第1章 2026年4月、Webの縦書きは進化した。";
+const HERO_SAMPLE = "第1章 2026年4月、Webの縦書きはAPIレベルから進化した。";
 
 export default async function LandingView({ locale }: { locale: Locale }) {
   const content = data[locale];
@@ -37,200 +38,295 @@ export default async function LandingView({ locale }: { locale: Locale }) {
   );
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
+    <div className="relative">
       <Meta
         title={`${content.hero.heading} - ${content.hero.eyebrow}`}
-        description={content.hero.tagline}
+        description={stripMd(content.hero.tagline)}
         image={`/api/og?title=${encodeURIComponent(content.hero.heading)}&eyebrow=${encodeURIComponent(content.hero.eyebrow)}`}
         url={url}
         lang={locale}
       />
-      <BreadcrumbSchema
-        items={generateBreadcrumbItems([{ label: content.hero.heading, href: url }], locale)}
-      />
-      <Breadcrumbs items={[{ label: content.hero.heading }]} lang={locale} />
+      {/* No BreadcrumbList on the landing — Schema.org expects ≥2 items, and
+          a "Home" by itself doesn't add value for the root URL. */}
 
-      <div className="max-w-5xl mx-auto">
-        <section className="mb-16">
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-3">
-            {content.hero.eyebrow}
-          </p>
-          <h1 className="text-5xl sm:text-6xl font-extrabold text-slate-900 dark:text-slate-100 mb-5 font-mono">
-            {content.hero.heading}
-          </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-            {content.hero.tagline}
-          </p>
-
-          <div className="flex flex-wrap gap-2 mb-8">
-            <Badge>{content.hero.badges.version}</Badge>
-            <Badge>{content.hero.badges.license}</Badge>
-            <Badge>{content.hero.badges.ssr}</Badge>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <Link
-              to={demoUrl}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-semibold transition-colors"
+      {/* —— HERO ——————————————————————————————————————————————————————
+          The vertical Mincho sample is the protagonist: it gets the larger
+          column (7/12 on lg+), large type, and a faint giant 「縦」 watermark
+          behind it. The horizontal metadata + CTAs sit on the left in a
+          narrower column. Reader is met by typography first. */}
+      <section className="relative px-5 sm:px-6 lg:px-12 pt-10 pb-16 sm:pt-12 sm:pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
+        <div className="max-w-6xl mx-auto grid grid-cols-12 gap-x-6 lg:gap-x-16 items-start">
+          {/* Left column: eyebrow + heading + tagline + badges + CTAs (narrower) */}
+          <div className="col-span-12 lg:col-span-5 wa-fade-up" style={{ animationDelay: "120ms" }}>
+            <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu mb-6">
+              {content.hero.eyebrow}
+            </p>
+            {/* Mono-ruby: 縦・中・横, each Kanji carrying its English reading
+                ABOVE it. The shape itself enacts tate-chu-yoko — Latin
+                glyphs sitting upright next to vertical-friendly Kanji.
+                aria-label feeds screen readers the canonical romaji. */}
+            <h1
+              className="font-mincho text-[3rem] xs:text-[3.5rem] sm:text-[4.75rem] lg:text-[5.5rem] leading-none tracking-tight text-ink mb-3"
+              aria-label="tate-chu-yoko"
             >
-              {content.hero.ctaDemo}
-            </Link>
-            <a
-              href={NPM_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold transition-colors"
-            >
-              {content.hero.ctaNpm}
-            </a>
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold transition-colors"
-            >
-              {content.hero.ctaGithub}
-            </a>
-          </div>
-        </section>
+              <ruby className="ruby-display">
+                縦<rt>tate</rt>
+                <span className="text-shu-deep dark:text-shu">中</span>
+                <rt>chu</rt>横<rt>yoko</rt>
+              </ruby>
+            </h1>
+            <p className="font-mono text-[12px] text-ink-soft tracking-[0.18em] mb-8">
+              tate-chu-yoko · tcy
+            </p>
 
-        <section className="mb-16">
-          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-8">
-            <style>{`
-              .tcy-preview-scope .tcy {
-                -webkit-text-combine: horizontal;
-                text-combine-upright: all;
-              }
-              .tcy-preview-vertical {
-                writing-mode: vertical-rl;
-                font-size: 1.75rem;
-                line-height: 2;
-                height: 18rem;
-                font-family: "Noto Serif JP", "Yu Mincho", serif;
-              }
-            `}</style>
-            <div className="tcy-preview-scope flex justify-center">
-              <p className="tcy-preview-vertical text-slate-900 dark:text-slate-100">
-                <Tcy>{PREVIEW_SAMPLE}</Tcy>
-              </p>
+            <p className="font-gothic text-base text-ink leading-[1.85] max-w-md mb-8">
+              <InlineMd text={content.hero.tagline} />
+            </p>
+
+            <div className="flex flex-wrap gap-2 mb-10">
+              <Badge>v{VERSIONS.core}</Badge>
+              <Badge>{content.hero.badges.license}</Badge>
+              <Badge>{content.hero.badges.ssr}</Badge>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Cta to={demoUrl} variant="primary">
+                {content.hero.ctaDemo}
+              </Cta>
+              <a
+                href={NPM_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="font-gothic text-sm text-ink-mute hover:text-shu-deep dark:hover:text-shu transition-colors underline decoration-rule decoration-from-font underline-offset-4"
+              >
+                {content.hero.ctaNpm}
+              </a>
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="font-gothic text-sm text-ink-mute hover:text-shu-deep dark:hover:text-shu transition-colors underline decoration-rule decoration-from-font underline-offset-4"
+              >
+                {content.hero.ctaGithub}
+              </a>
             </div>
           </div>
-        </section>
 
-        <Section heading={content.problem.heading}>
+          {/* Right column: live vertical sample, now the wider column. */}
+          <div
+            className="col-span-12 lg:col-span-7 wa-fade-up mt-12 lg:mt-0"
+            style={{ animationDelay: "320ms" }}
+          >
+            <figure
+              className="relative px-5 sm:px-8 lg:px-12 py-2 overflow-hidden"
+              style={{
+                borderLeft: "1px solid var(--color-rule)",
+                borderRight: "1px solid var(--color-rule)",
+              }}
+            >
+              {/* shu chapter accent on the left rule */}
+              <span
+                aria-hidden="true"
+                className="absolute -left-px top-0 w-px h-16 sm:h-20 bg-shu wa-rule-draw"
+              />
+
+              {/* Atmospheric watermark — giant 縦 in shu-wash. Clamps with
+                  viewport so it doesn't blow past mobile screens. */}
+              <span
+                aria-hidden="true"
+                className="absolute -top-6 sm:-top-12 -right-4 sm:-right-8 font-mincho text-shu-wash select-none pointer-events-none leading-none"
+                style={{ fontSize: "clamp(13rem, 55vw, 26rem)", opacity: 0.55 }}
+              >
+                縦
+              </span>
+
+              {/* Tiny vertical caption in the right gutter. Hidden on the
+                  smallest screens where it competes for space with the
+                  watermark. */}
+              <span
+                aria-hidden="true"
+                className="hidden sm:block absolute right-2 top-2 font-gothic text-[10px] uppercase tracking-[0.4em] text-ink-soft select-none"
+                style={{ writingMode: "vertical-rl" }}
+              >
+                live · vertical
+              </span>
+
+              <div className="tcy tcy-hero relative">
+                <p
+                  className="tcy-vertical text-ink relative"
+                  style={{
+                    fontSize: "clamp(1.65rem, 5.5vw, 2.4rem)",
+                    lineHeight: 2.05,
+                    height: "clamp(22rem, 65vw, 30rem)",
+                    fontWeight: 500,
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  <Tcy>{HERO_SAMPLE}</Tcy>
+                </p>
+              </div>
+            </figure>
+
+            {/* Caption strip below the figure: <Tcy>...</Tcy> in mono with a
+                small shu seal on the right marking it as the page's signature. */}
+            <figcaption className="mt-6 flex items-baseline gap-3 px-5 sm:px-8 lg:px-12">
+              <span
+                aria-hidden="true"
+                className="block w-4 h-px bg-shu translate-y-[-3px] flex-shrink-0"
+              />
+              <p className="font-mono text-[10px] sm:text-[11px] text-ink-mute break-all flex-1">
+                {`<Tcy>${HERO_SAMPLE}</Tcy>`}
+              </p>
+            </figcaption>
+          </div>
+        </div>
+      </section>
+
+      {/* No breadcrumbs on the landing — the page IS home; rendering a
+          "Home / tate-chu-yoko" trail just doubles up the title. */}
+
+      <div className="px-5 sm:px-6 lg:px-12 lg:pl-20 max-w-6xl mx-auto pb-20 sm:pb-24">
+        {/* —— Problem ——————————————————————————————————————————————— */}
+        <Section n={1} eyebrow="Why" heading={content.problem.heading}>
           <Prose>{content.problem.body}</Prose>
         </Section>
 
-        <Section heading={content.family.heading}>
+        {/* —— Family ——————————————————————————————————————————————— */}
+        <Section n={2} eyebrow="Packages" heading={content.family.heading}>
           <Prose>{content.family.description}</Prose>
 
-          <div className="mt-8">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+          <div className="mt-10">
+            <p className="font-gothic text-[10px] uppercase tracking-[0.3em] text-ink-soft mb-4">
               {content.family.coreLabel}
             </p>
             <Link
-              to={adapterMap.core.href(locale)}
-              className="block rounded-xl border-2 border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-white dark:from-primary-950 dark:to-slate-900 p-6 hover:border-primary-400 dark:hover:border-primary-500 transition-colors"
+              to={adapterMap.core.href(locale) as `/${string}`}
+              className="group block py-6 transition-colors"
+              style={{
+                borderTop: "1px solid var(--color-rule)",
+                borderBottom: "1px solid var(--color-rule)",
+              }}
             >
-              <div className="flex items-baseline gap-3 mb-2 flex-wrap">
-                <p className="font-mono text-base text-primary-700 dark:text-primary-300 break-all">
-                  {coreItem.name}
-                </p>
-                <Badge>{coreItem.version}</Badge>
+              <div className="grid grid-cols-12 gap-4 items-baseline">
+                <div className="col-span-12 sm:col-span-4">
+                  <p className="font-mono text-base text-ink group-hover:text-shu-deep dark:group-hover:text-shu transition-colors break-all">
+                    {coreItem.name}
+                  </p>
+                  <p className="font-mono text-[11px] text-ink-soft tracking-wider mt-1">
+                    v{VERSIONS.core}
+                  </p>
+                </div>
+                <div className="col-span-12 sm:col-span-8">
+                  <p className="font-mincho text-lg text-ink leading-snug mb-1.5">
+                    {coreItem.role}
+                  </p>
+                  <p className="text-sm text-ink-mute leading-relaxed">
+                    <InlineMd text={coreItem.description} />
+                  </p>
+                </div>
               </div>
-              <p className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                {coreItem.role}
-              </p>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                <InlineMd text={coreItem.description} />
-              </p>
             </Link>
           </div>
 
-          <div className="mt-8">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+          <div className="mt-10">
+            <p className="font-gothic text-[10px] uppercase tracking-[0.3em] text-ink-soft mb-4">
               {content.family.adaptersLabel}
             </p>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {adapterItems.map((pkg) => {
+            <ul className="grid sm:grid-cols-2 gap-x-8">
+              {adapterItems.map((pkg, i) => {
                 const meta = adapterMap[asAdapterKey(pkg.name)];
                 return (
-                  <Link
+                  <li
                     key={pkg.name}
-                    to={meta.href(locale)}
-                    className="group block rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-sm transition-all"
+                    className={i < 2 ? "" : "sm:pt-0"}
+                    style={{
+                      borderTop: "1px solid var(--color-rule)",
+                    }}
                   >
-                    <div className="flex items-start justify-between gap-2 mb-2 flex-wrap">
-                      <p className="font-mono text-sm text-primary-700 dark:text-primary-300 break-all">
-                        {pkg.name}
+                    <Link to={meta.href(locale) as `/${string}`} className="group block py-5">
+                      <div className="flex items-baseline gap-2 mb-1.5 flex-wrap">
+                        <p className="font-mono text-sm text-ink group-hover:text-shu-deep dark:group-hover:text-shu transition-colors break-all">
+                          {pkg.name}
+                        </p>
+                        {pkg.isNew && <NewBadge />}
+                      </div>
+                      <p className="font-mincho text-base text-ink leading-snug mb-1">{pkg.role}</p>
+                      <p className="text-sm text-ink-mute leading-relaxed">
+                        <InlineMd text={pkg.description} />
                       </p>
-                      {pkg.isNew ? <NewBadge /> : null}
-                    </div>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                      {pkg.role}
-                    </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-                      <InlineMd text={pkg.description} />
-                    </p>
-                    <div className="flex items-center justify-between text-xs">
-                      {pkg.tagline ? (
-                        <span className="text-slate-500 dark:text-slate-400 italic">
-                          {pkg.tagline}
+                      <div className="flex items-center justify-between mt-3 text-xs">
+                        {pkg.tagline ? (
+                          <span className="font-mincho text-ink-soft italic">{pkg.tagline}</span>
+                        ) : (
+                          <span />
+                        )}
+                        <span className="font-gothic text-ink-mute group-hover:text-shu-deep dark:group-hover:text-shu transition-colors uppercase tracking-[0.18em]">
+                          {content.family.viewLabel} →
                         </span>
-                      ) : (
-                        <span />
-                      )}
-                      <span className="text-primary-600 dark:text-primary-400 font-semibold group-hover:translate-x-0.5 transition-transform">
-                        {content.family.viewLabel} →
-                      </span>
-                    </div>
-                  </Link>
+                      </div>
+                    </Link>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
         </Section>
 
-        <Section heading={content.shared.heading}>
+        {/* —— Shared CSS —————————————————————————————————————————— */}
+        <Section n={3} eyebrow="Stylesheet" heading={content.shared.heading}>
           <Prose>{content.shared.description}</Prose>
-          <SnippetBlock label="CSS" code={RECOMMENDED_CSS} language="css" />
+          <SnippetBlock label="recommended.css" code={RECOMMENDED_CSS} language="css" />
         </Section>
 
-        <Section heading={content.behavior.heading}>
-          <ul className="space-y-2 list-disc list-inside text-slate-700 dark:text-slate-300">
+        {/* —— Behavior ——————————————————————————————————————————— */}
+        <Section n={4} eyebrow="Behaviour" heading={content.behavior.heading}>
+          <ul className="space-y-3 text-ink leading-relaxed">
             {content.behavior.items.map((item, i) => (
-              <li key={i} className="leading-relaxed">
-                <InlineMd text={item} />
+              <li key={i} className="flex gap-3">
+                <span
+                  aria-hidden="true"
+                  className="font-mincho text-shu-deep dark:text-shu mt-0.5 select-none"
+                >
+                  ・
+                </span>
+                <span className="flex-1">
+                  <InlineMd text={item} />
+                </span>
               </li>
             ))}
           </ul>
         </Section>
 
-        <Section heading={content.browser.heading}>
+        {/* —— Browser —————————————————————————————————————————— */}
+        <Section n={5} eyebrow="Browser support" heading={content.browser.heading}>
           <Prose>{content.browser.body}</Prose>
         </Section>
 
-        <Section heading={content.versioning.heading}>
+        {/* —— Versioning —————————————————————————————————————— */}
+        <Section n={6} eyebrow="Versioning" heading={content.versioning.heading}>
           <Prose>{content.versioning.body}</Prose>
         </Section>
 
-        <Section heading={content.license.heading}>
+        {/* —— License —————————————————————————————————————————— */}
+        <Section n={7} eyebrow="License" heading={content.license.heading}>
           <Prose>{content.license.body}</Prose>
         </Section>
 
-        <section className="mt-16 mb-8 rounded-xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-950 p-8 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-            {content.cta.heading}
-          </h2>
-          <p className="text-slate-700 dark:text-slate-300 mb-5">
-            <InlineMd text={content.cta.body} />
-          </p>
-          <Link
-            to={demoUrl}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-semibold transition-colors"
-          >
-            {content.cta.button}
-          </Link>
+        {/* —— CTA strip ——————————————————————————————————————— */}
+        <section className="mt-16 pt-12" style={{ borderTop: "1px solid var(--color-rule)" }}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div>
+              <h2 className="font-mincho text-2xl text-ink leading-snug mb-1">
+                {content.cta.heading}
+              </h2>
+              <p className="text-sm text-ink-mute leading-relaxed max-w-md">
+                <InlineMd text={content.cta.body} />
+              </p>
+            </div>
+            <Cta to={demoUrl} variant="primary">
+              {content.cta.button}
+            </Cta>
+          </div>
         </section>
       </div>
     </div>
