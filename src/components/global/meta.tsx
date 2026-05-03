@@ -1,33 +1,31 @@
+import { localePath, type Locale } from "@/lib/locale";
+
 interface MetaProps {
   title: string;
   description: string;
   image?: string;
   url?: string;
-  lang?: "en" | "ja";
+  lang?: Locale;
 }
 
-const SITE_ORIGIN = "https://love-rox.cc";
+const SITE_ORIGIN = "https://tcy.love-rox.cc";
+const SITE_NAME = "tate-chu-yoko";
 
-// Strip the leading /en or /ja so we can build all locale variants and the
-// common (lang-less) URL from one normalized path. Works for both common URLs
-// like "/blog/foo" and locale URLs like "/en/blog/foo".
-function commonPathFromUrl(url: string): string {
-  return url.replace(/^\/(en|ja)(?=\/|$)/, "") || "/";
+// ja-default URL strategy: ja URL has no /ja prefix; en URL is /en/...
+// Strip the /en prefix to get the canonical (ja) suffix used in alternates.
+function suffixFrom(url: string): string {
+  if (url === "/" || url === "") return "";
+  if (url === "/en") return "";
+  if (url.startsWith("/en/")) return url.slice(4);
+  return url.replace(/^\//, "");
 }
 
-function localizedUrl(commonPath: string, locale: "en" | "ja"): string {
-  return commonPath === "/" ? `/${locale}` : `/${locale}${commonPath}`;
-}
-
-export const Meta = ({ title, description, image, url, lang = "en" }: MetaProps) => {
-  const siteName = "Rox";
-  const defaultImage = "/assets/logos/png/rox-horizontal@2x.png";
-  const ogImage = image || defaultImage;
+export const Meta = ({ title, description, image, url, lang = "ja" }: MetaProps) => {
+  const ogImage = image || "/images/favicon.png";
   const absoluteOgImage = ogImage.startsWith("http") ? ogImage : `${SITE_ORIGIN}${ogImage}`;
-
   const absoluteUrl = url ? (url.startsWith("http") ? url : `${SITE_ORIGIN}${url}`) : undefined;
 
-  const commonPath = url ? commonPathFromUrl(url) : null;
+  const suffix = url ? suffixFrom(url) : null;
 
   return (
     <>
@@ -36,34 +34,27 @@ export const Meta = ({ title, description, image, url, lang = "en" }: MetaProps)
       <meta name="robots" content="index, follow" />
       {absoluteUrl && <link rel="canonical" href={absoluteUrl} />}
 
-      {commonPath && (
+      {suffix !== null && (
         <>
+          <link rel="alternate" hrefLang="ja" href={`${SITE_ORIGIN}${localePath("ja", suffix)}`} />
+          <link rel="alternate" hrefLang="en" href={`${SITE_ORIGIN}${localePath("en", suffix)}`} />
           <link
             rel="alternate"
-            hrefLang="en"
-            href={`${SITE_ORIGIN}${localizedUrl(commonPath, "en")}`}
+            hrefLang="x-default"
+            href={`${SITE_ORIGIN}${localePath("ja", suffix)}`}
           />
-          <link
-            rel="alternate"
-            hrefLang="ja"
-            href={`${SITE_ORIGIN}${localizedUrl(commonPath, "ja")}`}
-          />
-          <link rel="alternate" hrefLang="x-default" href={`${SITE_ORIGIN}${commonPath}`} />
         </>
       )}
 
-      {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content={siteName} />
+      <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={absoluteOgImage} />
       <meta property="og:locale" content={lang === "ja" ? "ja_JP" : "en_US"} />
       {absoluteUrl && <meta property="og:url" content={absoluteUrl} />}
 
-      {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@Love_Rox_cc" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={absoluteOgImage} />
