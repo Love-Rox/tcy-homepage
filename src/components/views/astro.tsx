@@ -1,25 +1,12 @@
-import { Link } from "waku";
-import { Meta } from "@/components/global/meta";
-import { Breadcrumbs, generateBreadcrumbItems } from "@/components/common/breadcrumbs";
-import { BreadcrumbSchema } from "@/components/seo/structured-data";
+import AdapterPage from "@/components/views/_adapter-page";
 import {
-  AdapterNav,
   ASTRO_INTEGRATION_OPTIONS,
-  Badge,
   InlineMd,
-  InstallCommands,
-  NewBadge,
-  npmUrl,
-  githubPackageUrl,
-  OptionsTable,
-  Prose,
   REHYPE_OPTIONS,
   Section,
   SHARED_OPTIONS,
-  SnippetBlock,
-  stripMd,
 } from "@/components/tcy/shared";
-import { localePath, type Locale } from "@/lib/locale";
+import type { Locale } from "@/lib/locale";
 import langJa from "@private/lang/pages/ja/astro.json";
 import langEn from "@private/lang/pages/en/astro.json";
 import landingJa from "@private/lang/pages/ja/index.json";
@@ -61,172 +48,67 @@ import Tcy from "@love-rox/tcy-astro/Tcy.astro";
 
 export default async function AstroView({ locale }: { locale: Locale }) {
   const content = data[locale];
-  const land = landing[locale];
-  const url = localePath(locale, "astro");
-  const familyUrl = localePath(locale, "");
-  const demoUrl = localePath(locale, "demo");
 
+  // Astro is the only adapter with a "two pieces" intermezzo (integration vs
+  // standalone component). Render it inline as the extraSection prop.
+  const twoPieces = (
+    <Section n={2} eyebrow="Pieces" heading={content.twoPieces.heading}>
+      <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6 mt-2">
+        {content.twoPieces.items.map((piece: { name: string; description: string }) => (
+          <div
+            key={piece.name}
+            className="pt-4"
+            style={{ borderTop: "1px solid var(--color-rule)" }}
+          >
+            <p className="font-mono text-sm text-ink mb-2 break-all">{piece.name}</p>
+            <p className="text-sm text-ink-mute leading-relaxed">
+              <InlineMd text={piece.description} />
+            </p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+
+  // shared options + rehype passthrough live in one combined table for Astro,
+  // and integration-specific options live in their own.
   const sharedAndRehype = [...SHARED_OPTIONS[locale], ...REHYPE_OPTIONS[locale]];
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
-      <Meta
-        title={`${content.hero.heading} - ${content.hero.eyebrow}`}
-        description={stripMd(content.hero.tagline)}
-        image={`/api/og?title=${encodeURIComponent(content.hero.heading)}&eyebrow=${encodeURIComponent(content.hero.eyebrow)}`}
-        url={url}
-        lang={locale}
-      />
-      <BreadcrumbSchema
-        items={generateBreadcrumbItems(
-          [
-            { label: land.hero.heading, href: familyUrl },
-            { label: content.hero.eyebrow, href: url },
-          ],
-          locale,
-        )}
-      />
-      <Breadcrumbs
-        items={[{ label: land.hero.heading, href: familyUrl }, { label: content.hero.eyebrow }]}
-        lang={locale}
-      />
-
-      <div className="max-w-5xl mx-auto">
-        <AdapterNav current="astro" locale={locale} />
-
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-3">
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400">
-              {content.hero.eyebrow}
-            </p>
-            {content.hero.isNew ? <NewBadge /> : null}
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-slate-100 mb-5 font-mono break-all">
-            {content.hero.heading}
-          </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-            <InlineMd text={content.hero.tagline} />
-          </p>
-
-          <div className="flex flex-wrap gap-2 mb-6">
-            <Badge>{content.hero.version}</Badge>
-            <Badge>MIT</Badge>
-            <Badge>astro &gt;= 4</Badge>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <Link
-              to={demoUrl}
-              className="inline-flex items-center gap-2 px-5 py-3 font-gothic text-[13px] uppercase tracking-[0.18em] text-ground bg-ink hover:bg-shu-deep dark:bg-ink dark:text-ground dark:hover:bg-shu transition-colors"
-            >
-              {content.hero.ctaDemo}
-            </Link>
-            <a
-              href={npmUrl(PKG)}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 font-gothic text-[13px] uppercase tracking-[0.18em] text-ink hover:text-shu-deep dark:hover:text-shu transition-colors"
-            >
-              {content.hero.ctaNpm}
-            </a>
-            <a
-              href={githubPackageUrl("astro")}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 font-gothic text-[13px] uppercase tracking-[0.18em] text-ink hover:text-shu-deep dark:hover:text-shu transition-colors"
-            >
-              {content.hero.ctaGithub}
-            </a>
-          </div>
-        </section>
-
-        <Section heading={content.install.heading}>
-          <Prose>{content.install.description}</Prose>
-          <InstallCommands pkg={PKG} />
-        </Section>
-
-        <Section heading={content.twoPieces.heading}>
-          <div className="grid sm:grid-cols-2 gap-4 mt-2">
-            {content.twoPieces.items.map((piece: { name: string; description: string }) => (
-              <div
-                key={piece.name}
-                className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5"
-              >
-                <p className="font-mono text-sm text-primary-700 dark:text-primary-300 mb-2">
-                  {piece.name}
-                </p>
-                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                  <InlineMd text={piece.description} />
-                </p>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        <Section heading={content.usage.heading}>
-          <Prose>{content.usage.description}</Prose>
-          <SnippetBlock
-            label={content.usage.integrationLabel}
-            code={integrationSnippet}
-            language="ts"
-          />
-
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-8 mb-3">
-            {content.usage.withOptionsHeading}
-          </h3>
-          <Prose>{content.usage.withOptionsDescription}</Prose>
-          <SnippetBlock
-            label={content.usage.withOptionsLabel}
-            code={integrationWithOptionsSnippet}
-            language="ts"
-          />
-
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-8 mb-3">
-            {content.usage.componentHeading}
-          </h3>
-          <Prose>{content.usage.componentDescription}</Prose>
-          <SnippetBlock
-            label={content.usage.componentLabel}
-            code={componentSnippet}
-            language="astro"
-          />
-        </Section>
-
-        <Section heading={content.options.heading}>
-          <Prose>{content.options.description}</Prose>
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-6 mb-3">
-            {content.options.sharedLabel}
-          </h3>
-          <OptionsTable columns={content.options.columns} rows={sharedAndRehype} />
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-8 mb-3">
-            {content.options.integrationLabel}
-          </h3>
-          <OptionsTable
-            columns={content.options.columns}
-            rows={ASTRO_INTEGRATION_OPTIONS[locale]}
-          />
-        </Section>
-
-        <Section heading={content.behavior.heading}>
-          <ul className="space-y-2 list-disc list-inside text-slate-700 dark:text-slate-300">
-            {content.behavior.items.map((item: string, i: number) => (
-              <li key={i} className="leading-relaxed">
-                <InlineMd text={item} />
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        <Section heading={content.related.heading}>
-          <Prose>{content.related.description}</Prose>
-        </Section>
-
-        <div className="mt-12 mb-8">
-          <Link to={familyUrl} className="text-primary-600 dark:text-primary-400 hover:underline">
-            {content.hero.backToFamily}
-          </Link>
-        </div>
-      </div>
-    </div>
+    <AdapterPage
+      locale={locale}
+      adapterKey="astro"
+      pkg={PKG}
+      ghFolder="astro"
+      thirdBadge="astro >= 4"
+      content={content}
+      landing={landing[locale]}
+      extraSection={twoPieces}
+      usage={[
+        {
+          label: content.usage.integrationLabel,
+          language: "ts",
+          code: integrationSnippet,
+        },
+        {
+          heading: content.usage.withOptionsHeading,
+          description: content.usage.withOptionsDescription,
+          label: content.usage.withOptionsLabel,
+          language: "ts",
+          code: integrationWithOptionsSnippet,
+        },
+        {
+          heading: content.usage.componentHeading,
+          description: content.usage.componentDescription,
+          label: content.usage.componentLabel,
+          language: "astro",
+          code: componentSnippet,
+        },
+      ]}
+      optionGroups={[
+        { label: content.options.sharedLabel, rows: sharedAndRehype },
+        { label: content.options.integrationLabel, rows: ASTRO_INTEGRATION_OPTIONS[locale] },
+      ]}
+    />
   );
 }
