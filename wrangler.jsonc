@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tcy-homepage",
+  "main": "./src/waku.server",
+  // nodejs_als: required for Waku's server-side request context (AsyncLocalStorage).
+  // (rox-homepage also enables nodejs_compat for mermaid → vscode-jsonrpc, but tcy-homepage
+  // does not bundle mermaid so we omit it.)
+  "compatibility_flags": ["nodejs_als"],
+  // https://developers.cloudflare.com/workers/platform/compatibility-dates
+  "compatibility_date": "2025-11-17",
+  "assets": {
+    // https://developers.cloudflare.com/workers/static-assets/binding/
+    "binding": "ASSETS",
+    "directory": "./dist/public",
+    "html_handling": "drop-trailing-slash",
+  },
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.js", "**/*.mjs"],
+    },
+  ],
+  "no_bundle": true,
+  // No runtime secrets needed (no contact form, no Turnstile, no Discord webhook).
+}
