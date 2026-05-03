@@ -1,4 +1,6 @@
+import type { ReactNode } from "react";
 import { Link } from "waku";
+import { Tcy } from "@love-rox/tcy-react";
 import { localePath, type Locale } from "@/lib/locale";
 
 export type { Locale };
@@ -47,57 +49,108 @@ export const ADAPTERS: AdapterMeta[] = [
   },
 ];
 
-export function AdapterNav({ current, locale }: { current: AdapterKey; locale: Locale }) {
+// —— wa-modern primitives ——————————————————————————————————————————
+
+const KANJI_NUMS = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+
+/** Vertical Kanji chapter number for section margins. Index is 1-based. */
+export function ChapterNumber({ n }: { n: number }) {
+  const k = KANJI_NUMS[n - 1] ?? String(n);
   return (
-    <nav aria-label="tate-chu-yoko packages" className="mb-10">
-      <ul className="flex flex-wrap gap-2">
-        {ADAPTERS.map((a) => {
-          const active = a.key === current;
-          return (
-            <li key={a.key}>
-              <Link
-                to={a.href(locale) as `/${string}`}
-                className={[
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs border transition-colors",
-                  active
-                    ? "bg-primary-600 text-white border-primary-600"
-                    : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-primary-400 dark:hover:border-primary-500",
-                ].join(" ")}
-              >
-                <span>{a.short}</span>
-                {a.isNew ? (
-                  <span
-                    className={[
-                      "ml-0.5 inline-flex items-center px-1.5 rounded-sm text-[10px] font-sans font-bold uppercase tracking-wider",
-                      active
-                        ? "bg-white/25 text-white"
-                        : "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200",
-                    ].join(" ")}
-                  >
-                    new
-                  </span>
-                ) : null}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+    <span
+      aria-hidden="true"
+      className="font-mincho text-shu-deep dark:text-shu select-none"
+      style={{
+        writingMode: "vertical-rl",
+        fontSize: "0.875rem",
+        letterSpacing: "0.4em",
+        lineHeight: 1,
+      }}
+    >
+      第{k}
+    </span>
   );
 }
 
-export function Section({ heading, children }: { heading: string; children: React.ReactNode }) {
+/** A small red square 落款印 (seal). Used in footer + accent moments. */
+export function SealMark({ label = "縦中横", size = 56 }: { label?: string; size?: number }) {
   return (
-    <section className="mb-12">
-      <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">{heading}</h2>
+    <span
+      role="img"
+      aria-label={label}
+      className="inline-flex items-center justify-center font-mincho text-ground bg-shu-deep select-none"
+      style={{
+        width: size,
+        height: size,
+        fontSize: size * 0.28,
+        lineHeight: 1,
+        letterSpacing: "0.05em",
+        writingMode: "vertical-rl",
+        padding: size * 0.08,
+        borderRadius: 2,
+        boxShadow: "inset 0 0 0 2px rgba(244,237,226,0.2)",
+        fontWeight: 700,
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+/** A hairline rule. Defaults to horizontal ink, pass orientation/tone to vary. */
+export function Rule({
+  orientation = "h",
+  tone = "ink",
+  className = "",
+}: {
+  orientation?: "h" | "v";
+  tone?: "ink" | "shu";
+  className?: string;
+}) {
+  const color = tone === "shu" ? "bg-shu" : "bg-rule";
+  const dim = orientation === "h" ? "h-px w-full" : "w-px h-full";
+  return <span aria-hidden="true" className={`block ${color} ${dim} ${className}`} />;
+}
+
+/** Section: chapter-number margin + Mincho heading + content. Optional eyebrow. */
+export function Section({
+  n,
+  eyebrow,
+  heading,
+  children,
+  className = "",
+}: {
+  n?: number;
+  eyebrow?: string;
+  heading: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={`relative mb-20 ${className}`}>
+      <header className="mb-8">
+        {n !== undefined && (
+          <div className="absolute -left-12 top-0 hidden lg:block">
+            <ChapterNumber n={n} />
+          </div>
+        )}
+        {eyebrow && (
+          <p className="font-gothic text-xs uppercase tracking-[0.25em] text-ink-mute mb-3">
+            {eyebrow}
+          </p>
+        )}
+        <h2 className="font-mincho text-3xl sm:text-4xl text-ink leading-tight">{heading}</h2>
+        <span aria-hidden="true" className="block h-px w-12 bg-shu mt-5" />
+      </header>
       {children}
     </section>
   );
 }
 
+/** Body paragraph with InlineMd (`code` and **bold**). */
 export function Prose({ children }: { children: string }) {
   return (
-    <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+    <p className="text-ink leading-[1.95] whitespace-pre-line">
       <InlineMd text={children} />
     </p>
   );
@@ -105,7 +158,6 @@ export function Prose({ children }: { children: string }) {
 
 export function InlineMd({ text }: { text: string }) {
   // Tokenize: handle **bold** and `code` segments without nesting.
-  // Pattern keeps each match as its own segment; bold wins outside backticks.
   const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
   return (
     <>
@@ -114,7 +166,8 @@ export function InlineMd({ text }: { text: string }) {
           return (
             <code
               key={i}
-              className="font-mono text-[0.9em] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-primary-700 dark:text-primary-300"
+              className="font-mono text-[0.88em] px-1.5 py-0.5 bg-ground-deep text-shu-deep dark:text-shu"
+              style={{ borderRadius: 2 }}
             >
               {part.slice(1, -1)}
             </code>
@@ -122,7 +175,7 @@ export function InlineMd({ text }: { text: string }) {
         }
         if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
           return (
-            <strong key={i} className="font-semibold text-slate-900 dark:text-slate-100">
+            <strong key={i} className="font-medium text-ink">
               {part.slice(2, -2)}
             </strong>
           );
@@ -133,17 +186,26 @@ export function InlineMd({ text }: { text: string }) {
   );
 }
 
-export function Badge({ children }: { children: React.ReactNode }) {
+/** Hairline-bordered metadata pill in mono (version, license, etc.). */
+export function Badge({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+    <span
+      className="inline-flex items-center px-2.5 py-1 font-mono text-[11px] tracking-wide text-ink-mute"
+      style={{ border: "1px solid var(--color-rule)", borderRadius: 1 }}
+    >
       {children}
     </span>
   );
 }
 
-export function NewBadge({ label = "NEW" }: { label?: string }) {
+/** Small vermilion seal-square. Kept understated (single character preferred). */
+export function NewBadge({ label = "新" }: { label?: string }) {
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-primary-600 text-white">
+    <span
+      className="inline-flex items-center justify-center font-mincho text-[11px] font-bold text-ground bg-shu-deep dark:bg-shu w-5 h-5 select-none"
+      style={{ borderRadius: 1, lineHeight: 1 }}
+      aria-label="new"
+    >
       {label}
     </span>
   );
@@ -159,15 +221,22 @@ export function SnippetBlock({
   language: string;
 }) {
   return (
-    <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-        <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">{label}</span>
-        <span className="text-xs font-mono text-slate-500 dark:text-slate-400">{language}</span>
-      </div>
-      <pre className="bg-slate-950 text-slate-100 text-sm leading-relaxed p-4 overflow-x-auto m-0">
+    <figure className="mt-5">
+      <figcaption className="flex items-baseline justify-between mb-2">
+        <span className="font-gothic text-xs uppercase tracking-[0.18em] text-ink-mute">
+          {label}
+        </span>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-ink-soft">
+          {language}
+        </span>
+      </figcaption>
+      <pre
+        className="bg-ink text-ground font-mono text-[13px] leading-[1.7] py-5 pr-5 pl-6 overflow-x-auto m-0"
+        style={{ borderLeft: "2px solid var(--color-shu)" }}
+      >
         <code>{code}</code>
       </pre>
-    </div>
+    </figure>
   );
 }
 
@@ -186,32 +255,29 @@ export function OptionsTable({
   rows: OptionRow[];
 }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
-      <table className="w-full text-sm">
-        <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
-          <tr>
-            <th className="text-left font-semibold px-4 py-3">{columns.name}</th>
-            <th className="text-left font-semibold px-4 py-3">{columns.type}</th>
-            <th className="text-left font-semibold px-4 py-3">{columns.default}</th>
-            <th className="text-left font-semibold px-4 py-3">{columns.description}</th>
+    <div className="mt-6 overflow-x-auto">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr style={{ borderBottom: "1px solid var(--color-rule-strong)" }}>
+            <Th>{columns.name}</Th>
+            <Th>{columns.type}</Th>
+            <Th>{columns.default}</Th>
+            <Th>{columns.description}</Th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-slate-900">
+        <tbody>
           {rows.map((row) => (
-            <tr
-              key={row.name}
-              className="border-t border-slate-200 dark:border-slate-700 align-top"
-            >
-              <td className="px-4 py-3 font-mono text-slate-900 dark:text-slate-100 whitespace-nowrap">
+            <tr key={row.name} style={{ borderBottom: "1px solid var(--color-rule)" }}>
+              <td className="px-3 py-3 font-mono text-[13px] text-ink whitespace-nowrap align-top">
                 {row.name}
               </td>
-              <td className="px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300">
+              <td className="px-3 py-3 font-mono text-[12px] text-ink-mute align-top">
                 {row.type}
               </td>
-              <td className="px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-nowrap">
+              <td className="px-3 py-3 font-mono text-[12px] text-ink-mute whitespace-nowrap align-top">
                 {row.default}
               </td>
-              <td className="px-4 py-3 text-slate-700 dark:text-slate-300 leading-relaxed">
+              <td className="px-3 py-3 text-ink leading-relaxed align-top">
                 <InlineMd text={row.description} />
               </td>
             </tr>
@@ -219,6 +285,14 @@ export function OptionsTable({
         </tbody>
       </table>
     </div>
+  );
+}
+
+function Th({ children }: { children: ReactNode }) {
+  return (
+    <th className="text-left font-gothic font-medium text-[11px] uppercase tracking-[0.18em] text-ink-mute px-3 py-3">
+      {children}
+    </th>
   );
 }
 
@@ -230,23 +304,127 @@ export function InstallCommands({ pkg }: { pkg: string }) {
     { manager: "yarn", command: `yarn add ${pkg}` },
   ];
   return (
-    <div className="grid sm:grid-cols-2 gap-3 mt-4">
+    <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mt-5">
       {commands.map(({ manager, command }) => (
-        <div
-          key={manager}
-          className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-4"
-        >
-          <p className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+        <div key={manager} className="pb-3" style={{ borderBottom: "1px solid var(--color-rule)" }}>
+          <p className="font-gothic text-[10px] uppercase tracking-[0.25em] text-ink-mute mb-1.5">
             {manager}
           </p>
-          <code className="font-mono text-sm text-slate-900 dark:text-slate-100 break-all">
-            {command}
-          </code>
+          <code className="font-mono text-sm text-ink break-all">{command}</code>
         </div>
       ))}
     </div>
   );
 }
+
+/** Adapter switcher: horizontal table-of-contents with shu underline on the active item. */
+export function AdapterNav({ current, locale }: { current: AdapterKey; locale: Locale }) {
+  return (
+    <nav aria-label="tate-chu-yoko packages" className="mb-12">
+      <ul className="flex flex-wrap items-stretch text-sm">
+        {ADAPTERS.map((a, i) => {
+          const active = a.key === current;
+          return (
+            <li
+              key={a.key}
+              className="flex items-stretch"
+              style={i > 0 ? { borderLeft: "1px solid var(--color-rule)" } : {}}
+            >
+              <Link
+                to={a.href(locale) as `/${string}`}
+                className={[
+                  "flex items-center gap-2 px-4 py-2 font-mono text-[13px] transition-colors relative",
+                  active
+                    ? "text-ink font-medium"
+                    : "text-ink-mute hover:text-ink dark:hover:text-ink",
+                ].join(" ")}
+              >
+                <span>{a.short}</span>
+                {a.isNew && <NewBadge />}
+                {active && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-4 right-4 -bottom-px h-px bg-shu"
+                  />
+                )}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+      <span aria-hidden="true" className="block h-px w-full bg-rule" />
+    </nav>
+  );
+}
+
+/** A vertical-rl Mincho text container — used for hero, demo previews, blog accents. */
+export function VerticalSample({
+  children,
+  height = "16rem",
+  fontSize = "1.5rem",
+  className = "",
+  showTcy = true,
+}: {
+  children: string;
+  height?: string;
+  fontSize?: string;
+  className?: string;
+  showTcy?: boolean;
+}) {
+  const inner = showTcy ? <Tcy>{children}</Tcy> : children;
+  return (
+    <div className={`tcy flex justify-center ${className}`} style={{ height }}>
+      <p
+        className="tcy-vertical text-ink"
+        style={{ fontSize, lineHeight: 2.05, padding: "0.5rem 0.25rem" }}
+      >
+        {inner}
+      </p>
+    </div>
+  );
+}
+
+/** CTA link: shu underline-grow on hover. Use for hero CTAs. */
+export function Cta({
+  to,
+  href,
+  children,
+  variant = "primary",
+}: {
+  to?: string;
+  href?: string;
+  children: ReactNode;
+  variant?: "primary" | "secondary";
+}) {
+  const cls = [
+    "group inline-flex items-center gap-2 px-5 py-3 font-gothic text-[13px] uppercase tracking-[0.18em] transition-colors",
+    variant === "primary"
+      ? "text-ground bg-ink hover:bg-shu-deep dark:bg-ink dark:text-ground dark:hover:bg-shu"
+      : "text-ink hover:text-shu-deep dark:hover:text-shu",
+  ].join(" ");
+  const inner = (
+    <>
+      {children}
+      <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+        →
+      </span>
+    </>
+  );
+  if (to) {
+    return (
+      <Link to={to as `/${string}`} className={cls}>
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className={cls}>
+      {inner}
+    </a>
+  );
+}
+
+// —— shared option tables ————————————————————————————————————————
 
 export const SHARED_OPTIONS = {
   ja: [
