@@ -1,0 +1,14 @@
+{
+  "tagline": "Bringing the feel of Japanese vertical typography to the web. A small family of typesetting libraries from Love-Rox.",
+  "sections": {
+    "packages": "Packages",
+    "community": "Links"
+  },
+  "links": {
+    "demo": "Interactive demo",
+    "blog": "Blog",
+    "rox": "Rox main site"
+  },
+  "copyright": "© 2026 Love-Rox. MIT License.",
+  "builtWith": "Built with"
+}

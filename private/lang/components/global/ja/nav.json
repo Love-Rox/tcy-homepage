@@ -1,0 +1,11 @@
+{
+  "items": [
+    { "name": "core", "href": "/" },
+    { "name": "react", "href": "/react" },
+    { "name": "vue", "href": "/vue" },
+    { "name": "rehype", "href": "/rehype" },
+    { "name": "astro", "href": "/astro" },
+    { "name": "デモ", "href": "/demo" },
+    { "name": "ブログ", "href": "/blog" }
+  ]
+}

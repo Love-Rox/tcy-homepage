@@ -1,0 +1,14 @@
+{
+  "tagline": "Webの縦書きに、縦中横の手触りを。Love-Rox から提供する小さな組版ライブラリ群。",
+  "sections": {
+    "packages": "パッケージ",
+    "community": "リンク"
+  },
+  "links": {
+    "demo": "インタラクティブデモ",
+    "blog": "ブログ",
+    "rox": "Rox 本体サイト"
+  },
+  "copyright": "© 2026 Love-Rox. MIT License.",
+  "builtWith": "Built with"
+}
