@@ -4,11 +4,16 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Weekly rebuild so the prebuild step (scripts/fetch-versions.ts) picks up
-  # any new @love-rox/tcy-* npm releases without anyone pushing a commit.
-  # Mondays 06:00 UTC ≈ Mon 15:00 JST. Adjust to "0 6 * * *" for daily.
+  # Weekly safety-net rebuild so the prebuild step (scripts/fetch-versions.ts)
+  # picks up any new @love-rox/tcy-* npm releases even if the upstream
+  # dispatch failed. Mondays 06:00 UTC ≈ Mon 15:00 JST.
   schedule:
     - cron: "0 6 * * 1"
+  # Triggered by Love-Rox/tate-chu-yoko's release workflow once a new
+  # version is published to npm. Lets the docs site re-deploy within a
+  # minute of release instead of waiting for the weekly cron.
+  repository_dispatch:
+    types: [tcy-released]
 
 # Only one deploy at a time; cancel in-flight runs when a newer commit lands on main.
 concurrency:

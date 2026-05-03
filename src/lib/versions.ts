@@ -2,11 +2,11 @@
 // Run `bun run versions` to refresh; do not hand-edit.
 
 export const VERSIONS = {
-  "core": "0.3.1",
-  "react": "0.3.1",
-  "vue": "0.3.1",
-  "rehype": "0.3.1",
-  "astro": "0.3.1"
+  core: "0.3.1",
+  react: "0.3.1",
+  vue: "0.3.1",
+  rehype: "0.3.1",
+  astro: "0.3.1",
 } as const;
 
 export type PackageKey = keyof typeof VERSIONS;
