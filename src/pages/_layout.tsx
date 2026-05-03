@@ -44,10 +44,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <OrganizationSchema />
         <SoftwareApplicationSchema />
       </head>
-      <body>
-        <div className="font-m-plus-rounded-1c bg-primary-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 min-h-screen flex flex-col">
+      <body className="bg-ground text-ink antialiased">
+        <div className="relative min-h-screen flex flex-col">
           <Header lang={lang} navItems={navItems} />
-          <main className="*:min-h-64 lg:min-h-svh flex-1">{children}</main>
+          <main className="flex-1 *:min-h-64 lg:min-h-svh">{children}</main>
           <Footer lang={lang} />
         </div>
       </body>
