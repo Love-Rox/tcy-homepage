@@ -338,6 +338,70 @@ h1 {
   border-left-color: var(--color-shu-deep);
 }
 
+/* —— ruby for the hero display heading ——————————————————————————
+   Each Kanji carries its English reading above it. We size the rt as a
+   small fraction of the parent so it scales with the headline and
+   pin it firmly above each glyph in tracked mono. */
+.ruby-display {
+  ruby-position: over;
+  ruby-align: center;
+  display: inline;
+}
+.ruby-display rt {
+  font-family: var(--font-mono);
+  font-size: 0.18em;
+  font-weight: 500;
+  color: var(--color-shu-deep);
+  letter-spacing: 0.18em;
+  text-transform: lowercase;
+  margin-bottom: 0.45em;
+  font-feature-settings: normal;
+}
+.dark .ruby-display rt {
+  color: var(--color-shu);
+}
+
+/* —— ambient pulse on the hero <Tcy> spans ————————————————————————
+   The vertical hero sample subtly breathes: each tcy-wrapped run
+   washes over with the lightest shu tint then fades, staggered so the
+   page feels gently alive without ever drawing attention to itself.
+   Disabled when the user prefers reduced motion. */
+@keyframes wa-tcy-pulse {
+  0%,
+  85%,
+  100% {
+    background-color: transparent;
+  }
+  20%,
+  35% {
+    background-color: var(--color-shu-wash);
+  }
+}
+
+.tcy-hero .tcy-vertical span.tcy {
+  animation: wa-tcy-pulse 7s var(--ease-paper) infinite;
+  border-radius: 1px;
+  padding: 0 0.05em;
+}
+.tcy-hero .tcy-vertical span.tcy:nth-of-type(2) {
+  animation-delay: 1.4s;
+}
+.tcy-hero .tcy-vertical span.tcy:nth-of-type(3) {
+  animation-delay: 2.8s;
+}
+.tcy-hero .tcy-vertical span.tcy:nth-of-type(4) {
+  animation-delay: 4.2s;
+}
+.tcy-hero .tcy-vertical span.tcy:nth-of-type(5) {
+  animation-delay: 5.6s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tcy-hero .tcy-vertical span.tcy {
+    animation: none;
+  }
+}
+
 /* —— page-load reveal: thin rule draws down, content fades up —— */
 @keyframes wa-rule-draw {
   from {

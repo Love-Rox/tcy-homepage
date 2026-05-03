@@ -1,8 +1,6 @@
 import { Link } from "waku";
 import { Tcy } from "@love-rox/tcy-react";
 import { Meta } from "@/components/global/meta";
-import { Breadcrumbs, generateBreadcrumbItems } from "@/components/common/breadcrumbs";
-import { BreadcrumbSchema } from "@/components/seo/structured-data";
 import {
   ADAPTERS,
   Badge,
@@ -47,27 +45,40 @@ export default async function LandingView({ locale }: { locale: Locale }) {
         url={url}
         lang={locale}
       />
-      <BreadcrumbSchema
-        items={generateBreadcrumbItems([{ label: content.hero.heading, href: url }], locale)}
-      />
+      {/* No BreadcrumbList on the landing — Schema.org expects ≥2 items, and
+          a "Home" by itself doesn't add value for the root URL. */}
 
       {/* —— HERO ——————————————————————————————————————————————————————
-          Asymmetric: vertical Mincho live sample on the right, horizontal
-          metadata + CTAs on the left. Reader sees the product working
-          before they read about it. */}
+          The vertical Mincho sample is the protagonist: it gets the larger
+          column (7/12 on lg+), large type, and a faint giant 「縦」 watermark
+          behind it. The horizontal metadata + CTAs sit on the left in a
+          narrower column. Reader is met by typography first. */}
       <section className="relative px-6 lg:px-12 pt-12 pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
-        <div className="max-w-6xl mx-auto grid grid-cols-12 gap-x-6 lg:gap-x-12 items-start">
-          {/* Left column: eyebrow + heading + tagline + badges + CTAs */}
-          <div className="col-span-12 lg:col-span-7 wa-fade-up" style={{ animationDelay: "120ms" }}>
+        <div className="max-w-6xl mx-auto grid grid-cols-12 gap-x-6 lg:gap-x-16 items-start">
+          {/* Left column: eyebrow + heading + tagline + badges + CTAs (narrower) */}
+          <div className="col-span-12 lg:col-span-5 wa-fade-up" style={{ animationDelay: "120ms" }}>
             <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu mb-6">
               {content.hero.eyebrow}
             </p>
-            <h1 className="font-mincho text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[0.95] tracking-tight text-ink mb-8">
-              <span className="block">tate-</span>
-              <span className="block">chu-yoko</span>
+            {/* Mono-ruby: 縦・中・横, each Kanji carrying its English reading
+                ABOVE it. The shape itself enacts tate-chu-yoko — Latin
+                glyphs sitting upright next to vertical-friendly Kanji.
+                aria-label feeds screen readers the canonical romaji. */}
+            <h1
+              className="font-mincho text-[3.5rem] sm:text-[4.75rem] lg:text-[5.5rem] leading-none tracking-tight text-ink mb-3"
+              aria-label="tate-chu-yoko"
+            >
+              <ruby className="ruby-display">
+                縦<rt>tate</rt>
+                <span className="text-shu-deep dark:text-shu">中</span>
+                <rt>chu</rt>横<rt>yoko</rt>
+              </ruby>
             </h1>
+            <p className="font-mono text-[12px] text-ink-soft tracking-[0.18em] mb-8">
+              tate-chu-yoko · tcy
+            </p>
 
-            <p className="font-gothic text-lg text-ink leading-[1.85] max-w-xl mb-8">
+            <p className="font-gothic text-base text-ink leading-[1.85] max-w-md mb-8">
               <InlineMd text={content.hero.tagline} />
             </p>
 
@@ -100,49 +111,74 @@ export default async function LandingView({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          {/* Right column: live vertical text sample. The product, not a preview. */}
+          {/* Right column: live vertical sample, now the wider column. */}
           <div
-            className="col-span-12 lg:col-span-5 wa-fade-up mt-10 lg:mt-0"
+            className="col-span-12 lg:col-span-7 wa-fade-up mt-12 lg:mt-0"
             style={{ animationDelay: "320ms" }}
           >
-            <div
-              className="relative pl-6 lg:pl-10"
-              style={{ borderLeft: "1px solid var(--color-rule)" }}
+            <figure
+              className="relative px-8 lg:px-12 py-2"
+              style={{
+                borderLeft: "1px solid var(--color-rule)",
+                borderRight: "1px solid var(--color-rule)",
+              }}
             >
-              {/* tiny chapter mark in the gutter */}
+              {/* shu chapter accent on the left rule */}
               <span
                 aria-hidden="true"
-                className="absolute -left-px top-0 w-px h-12 bg-shu wa-rule-draw"
+                className="absolute -left-px top-0 w-px h-20 bg-shu wa-rule-draw"
               />
-              <p className="font-gothic text-[10px] uppercase tracking-[0.3em] text-ink-soft mb-4">
+
+              {/* Atmospheric watermark — giant 縦 in shu-wash. Massive, faint,
+                  positioned to bleed off the upper-right edge of the page. */}
+              <span
+                aria-hidden="true"
+                className="absolute -top-12 -right-8 font-mincho text-shu-wash select-none pointer-events-none leading-none"
+                style={{ fontSize: "26rem", opacity: 0.55 }}
+              >
+                縦
+              </span>
+
+              {/* Tiny vertical caption in the right gutter — runs the same
+                  direction as the body, frames the sample as "live". */}
+              <span
+                aria-hidden="true"
+                className="absolute right-2 top-2 font-gothic text-[10px] uppercase tracking-[0.4em] text-ink-soft select-none"
+                style={{ writingMode: "vertical-rl" }}
+              >
                 live · vertical
-              </p>
-              <div className="tcy">
+              </span>
+
+              <div className="tcy tcy-hero relative">
                 <p
-                  className="tcy-vertical text-ink"
+                  className="tcy-vertical text-ink relative"
                   style={{
-                    fontSize: "1.65rem",
-                    lineHeight: 2.1,
-                    height: "22rem",
+                    fontSize: "2.4rem",
+                    lineHeight: 2.05,
+                    height: "30rem",
                     fontWeight: 500,
+                    letterSpacing: "0.02em",
                   }}
                 >
                   <Tcy>{HERO_SAMPLE}</Tcy>
                 </p>
               </div>
-              <p className="font-mono text-[11px] text-ink-soft mt-6 break-all">
+            </figure>
+
+            {/* Caption strip below the figure: <Tcy>...</Tcy> in mono with a
+                small shu seal on the right marking it as the page's signature. */}
+            <figcaption className="mt-6 flex items-baseline gap-4 px-8 lg:px-12">
+              <span aria-hidden="true" className="block w-4 h-px bg-shu translate-y-[-3px]" />
+              <p className="font-mono text-[11px] text-ink-mute break-all flex-1">
                 {`<Tcy>${HERO_SAMPLE}</Tcy>`}
               </p>
-            </div>
+            </figcaption>
           </div>
         </div>
       </section>
 
-      {/* breadcrumbs are usually first; we drop them down here, after the hero,
-          set very small. They're for nav, not eye-grabbing. */}
-      <div className="px-6 lg:px-12 max-w-6xl mx-auto">
-        <Breadcrumbs items={[{ label: content.hero.heading }]} lang={locale} />
-      </div>
+      {/* No breadcrumbs on the landing — the page IS home; rendering a
+          "Home / tate-chu-yoko" trail just doubles up the title. */}
 
       <div className="px-6 lg:px-12 pl-6 lg:pl-20 max-w-6xl mx-auto pb-24">
         {/* —— Problem ——————————————————————————————————————————————— */}
