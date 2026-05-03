@@ -7,14 +7,17 @@ import { localePath, type Locale } from "@/lib/locale";
 
 const indexCopy = {
   en: {
-    title: "Blog",
-    description: "Releases, design notes, and updates from the tate-chu-yoko packages.",
+    eyebrow: "Journal",
+    title: "Releases & notes",
+    description:
+      "Release announcements, design notes, and updates from the tate-chu-yoko packages.",
     by: "By",
   },
   ja: {
-    title: "ブログ",
-    description: "tate-chu-yoko パッケージのリリース・設計メモ・アップデート。",
-    by: "著者:",
+    eyebrow: "ジャーナル",
+    title: "リリースと組版手記",
+    description: "tate-chu-yoko パッケージのリリース、設計の手記、アップデートを綴っています。",
+    by: "著",
   },
 } as const;
 
@@ -51,11 +54,11 @@ export default async function BlogIndexView({ locale }: { locale: Locale }) {
   );
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
+    <div className="relative">
       <Meta
-        title={indexData.title}
+        title={`${indexData.title} - tate-chu-yoko`}
         description={indexData.description}
-        image={`/api/og?title=${encodeURIComponent(indexData.title)}`}
+        image={`/api/og?title=${encodeURIComponent(indexData.title)}&eyebrow=${encodeURIComponent(indexData.eyebrow)}`}
         url={localePath(locale, "blog")}
         lang={locale}
       />
@@ -66,38 +69,65 @@ export default async function BlogIndexView({ locale }: { locale: Locale }) {
         )}
       />
 
-      <Breadcrumbs items={[{ label: indexData.title }]} lang={locale} />
+      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-10 lg:pt-14">
+        <Breadcrumbs items={[{ label: indexData.title }]} lang={locale} />
+      </div>
 
-      <header className="mb-12">
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-          {indexData.title}
-        </h1>
-        <p className="text-xl text-slate-600 dark:text-slate-300">{indexData.description}</p>
-      </header>
+      <div className="px-6 lg:px-12 pl-6 lg:pl-20 max-w-6xl mx-auto pb-24">
+        <header className="mb-16 wa-fade-up" style={{ animationDelay: "120ms" }}>
+          <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu mb-5">
+            {indexData.eyebrow}
+          </p>
+          <h1 className="font-mincho text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem] leading-[1.1] text-ink mb-6 max-w-3xl">
+            {indexData.title}
+          </h1>
+          <p className="font-gothic text-base text-ink-mute leading-[1.85] max-w-2xl">
+            {indexData.description}
+          </p>
+          <span aria-hidden="true" className="block h-px w-12 bg-shu mt-8" />
+        </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {sortedPosts.map((post) => (
-          <Link
-            key={post.slug}
-            to={localePath(locale, `blog/${post.slug}`)}
-            className="block bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md hover:shadow-xl transition-all border border-slate-200 dark:border-slate-700 group hover:border-primary-500 dark:hover:border-primary-400"
-          >
-            <time className="text-sm text-slate-500 dark:text-slate-400">
-              {new Date(post.date).toLocaleDateString(locale, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </time>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-2 mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-              {post.title}
-            </h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-4">{post.excerpt}</p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {indexData.by} {post.author}
-            </p>
-          </Link>
-        ))}
+        {/* List of posts as a typeset table-of-contents — date | title | author */}
+        <ul className="max-w-4xl">
+          {sortedPosts.map((post, i) => (
+            <li
+              key={post.slug}
+              style={{
+                borderTop: i === 0 ? "1px solid var(--color-rule)" : undefined,
+                borderBottom: "1px solid var(--color-rule)",
+              }}
+            >
+              <Link
+                to={localePath(locale, `blog/${post.slug}`)}
+                className="group grid grid-cols-12 gap-x-6 py-7 transition-colors"
+              >
+                <time
+                  dateTime={post.date}
+                  className="col-span-12 sm:col-span-3 font-mono text-[11px] uppercase tracking-wider text-ink-soft pt-1.5"
+                >
+                  {new Date(post.date).toLocaleDateString(locale, {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })}
+                </time>
+                <div className="col-span-12 sm:col-span-9">
+                  <h2 className="font-mincho text-2xl sm:text-3xl text-ink leading-snug mb-2 group-hover:text-shu-deep dark:group-hover:text-shu transition-colors">
+                    {post.title}
+                  </h2>
+                  {post.excerpt && (
+                    <p className="font-gothic text-sm text-ink-mute leading-relaxed mb-3">
+                      {post.excerpt}
+                    </p>
+                  )}
+                  <p className="font-mincho italic text-[13px] text-ink-soft">
+                    {indexData.by}・{post.author}
+                  </p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

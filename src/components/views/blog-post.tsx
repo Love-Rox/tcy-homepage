@@ -6,8 +6,8 @@ import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/structured-dat
 import { localePath, type Locale } from "@/lib/locale";
 
 const indexCopy = {
-  en: { title: "Blog", backToList: "← Back to all posts" },
-  ja: { title: "ブログ", backToList: "← 一覧に戻る" },
+  en: { title: "Journal", backToList: "← All entries" },
+  ja: { title: "ジャーナル", backToList: "← 一覧へ戻る" },
 } as const;
 
 export default async function BlogPostView({ locale, slug }: { locale: Locale; slug: string }) {
@@ -17,15 +17,15 @@ export default async function BlogPostView({ locale, slug }: { locale: Locale; s
 
   if (!content) {
     return (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
+      <div className="px-6 lg:px-12 pl-6 lg:pl-20 max-w-6xl mx-auto pt-16 pb-24">
         <Meta
           title={`Not Found - ${indexData.title}`}
-          description="The requested blog post could not be found."
+          description="The requested journal entry could not be found."
           url={url}
           lang={locale}
         />
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-          {locale === "ja" ? "記事が見つかりません" : "Post not found"}
+        <h1 className="font-mincho text-3xl text-ink mb-4">
+          {locale === "ja" ? "記事が見つかりません" : "Entry not found"}
         </h1>
       </div>
     );
@@ -37,7 +37,7 @@ export default async function BlogPostView({ locale, slug }: { locale: Locale; s
   const ogUrl = `/api/og?${ogParams.toString()}`;
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
+    <div className="relative">
       <Meta
         title={`${content.metadata.title} - ${indexData.title}`}
         description={content.metadata.excerpt || content.metadata.description}
@@ -64,38 +64,49 @@ export default async function BlogPostView({ locale, slug }: { locale: Locale; s
         author={content.metadata.author || "Love-Rox"}
       />
 
-      <Breadcrumbs
-        items={[
-          { label: indexData.title, href: localePath(locale, "blog") },
-          { label: content.metadata.title },
-        ]}
-        lang={locale}
-      />
+      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-10 lg:pt-14">
+        <Breadcrumbs
+          items={[
+            { label: indexData.title, href: localePath(locale, "blog") },
+            { label: content.metadata.title },
+          ]}
+          lang={locale}
+        />
+      </div>
 
-      <BlogPost
-        content={content.html}
-        date={
-          content.metadata.date
-            ? new Date(content.metadata.date).toLocaleDateString(locale, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })
-            : ""
-        }
-        updatedDate={
-          content.metadata.updated
-            ? new Date(content.metadata.updated).toLocaleDateString(locale, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })
-            : undefined
-        }
-        author={content.metadata.author || "Love-Rox"}
-        lang={locale}
-        backLabel={indexData.backToList}
-      />
+      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-6 pb-24">
+        <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu max-w-3xl mx-auto mb-5">
+          {indexData.title}
+        </p>
+        <h1 className="font-mincho text-[2.25rem] sm:text-[3rem] lg:text-[3.75rem] leading-[1.15] text-ink mb-10 max-w-3xl mx-auto">
+          {content.metadata.title}
+        </h1>
+
+        <BlogPost
+          content={content.html}
+          date={
+            content.metadata.date
+              ? new Date(content.metadata.date).toLocaleDateString(locale, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : ""
+          }
+          updatedDate={
+            content.metadata.updated
+              ? new Date(content.metadata.updated).toLocaleDateString(locale, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : undefined
+          }
+          author={content.metadata.author || "Love-Rox"}
+          lang={locale}
+          backLabel={indexData.backToList}
+        />
+      </div>
     </div>
   );
 }
