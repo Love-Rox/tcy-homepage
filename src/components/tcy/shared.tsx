@@ -156,9 +156,16 @@ export function Prose({ children }: { children: string }) {
   );
 }
 
+// Lightweight inline markdown renderer for i18n strings. Supports `code`,
+// **bold**, and [text](url) links — no nesting, no recursion. Anything outside
+// these patterns is rendered as a span (with backslash escapes like \`, \*, \[
+// stripped so authors can write a literal `[` without it being parsed as a link).
+const INLINE_MD_RE = /(`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
+const LINK_RE = /^\[([^\]]+)\]\(([^)]+)\)$/;
+const ESCAPE_RE = /\\([`*[\]()\\])/g;
+
 export function InlineMd({ text }: { text: string }) {
-  // Tokenize: handle **bold** and `code` segments without nesting.
-  const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
+  const parts = text.split(INLINE_MD_RE);
   return (
     <>
       {parts.map((part, i) => {
@@ -180,7 +187,22 @@ export function InlineMd({ text }: { text: string }) {
             </strong>
           );
         }
-        return <span key={i}>{part}</span>;
+        const linkMatch = part.match(LINK_RE);
+        if (linkMatch) {
+          const [, label, href] = linkMatch;
+          const external = href.startsWith("http");
+          return (
+            <a
+              key={i}
+              href={href}
+              {...(external && { target: "_blank", rel: "noopener noreferrer" })}
+              className="text-shu-deep dark:text-shu underline decoration-shu-soft hover:decoration-shu underline-offset-2 transition-colors"
+            >
+              {label}
+            </a>
+          );
+        }
+        return <span key={i}>{part.replace(ESCAPE_RE, "$1")}</span>;
       })}
     </>
   );
