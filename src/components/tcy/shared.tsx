@@ -164,6 +164,16 @@ const INLINE_MD_RE = /(`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
 const LINK_RE = /^\[([^\]]+)\]\(([^)]+)\)$/;
 const ESCAPE_RE = /\\([`*[\]()\\])/g;
 
+/** Strip markdown markers so a string is safe for plain-text contexts like
+ *  meta descriptions and OGP unfurls. */
+export function stripMd(text: string): string {
+  return text
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(ESCAPE_RE, "$1");
+}
+
 export function InlineMd({ text }: { text: string }) {
   const parts = text.split(INLINE_MD_RE);
   return (

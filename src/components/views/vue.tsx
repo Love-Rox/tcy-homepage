@@ -15,6 +15,7 @@ import {
   Section,
   SHARED_OPTIONS,
   SnippetBlock,
+  stripMd,
 } from "@/components/tcy/shared";
 import { localePath, type Locale } from "@/lib/locale";
 import langJa from "@private/lang/pages/ja/vue.json";
@@ -48,7 +49,7 @@ export default async function VueView({ locale }: { locale: Locale }) {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
       <Meta
         title={`${content.hero.heading} - ${content.hero.eyebrow}`}
-        description={content.hero.tagline}
+        description={stripMd(content.hero.tagline)}
         image={`/api/og?title=${encodeURIComponent(content.hero.heading)}&eyebrow=${encodeURIComponent(content.hero.eyebrow)}`}
         url={url}
         lang={locale}
@@ -78,7 +79,7 @@ export default async function VueView({ locale }: { locale: Locale }) {
             {content.hero.heading}
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-            {content.hero.tagline}
+            <InlineMd text={content.hero.tagline} />
           </p>
 
           <div className="flex flex-wrap gap-2 mb-6">
@@ -90,7 +91,7 @@ export default async function VueView({ locale }: { locale: Locale }) {
           <div className="flex flex-wrap gap-3">
             <Link
               to={demoUrl}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-semibold transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3 font-gothic text-[13px] uppercase tracking-[0.18em] text-ground bg-ink hover:bg-shu-deep dark:bg-ink dark:text-ground dark:hover:bg-shu transition-colors"
             >
               {content.hero.ctaDemo}
             </Link>
@@ -98,7 +99,7 @@ export default async function VueView({ locale }: { locale: Locale }) {
               href={npmUrl(PKG)}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3 font-gothic text-[13px] uppercase tracking-[0.18em] text-ink hover:text-shu-deep dark:hover:text-shu transition-colors"
             >
               {content.hero.ctaNpm}
             </a>
@@ -106,7 +107,7 @@ export default async function VueView({ locale }: { locale: Locale }) {
               href={githubPackageUrl("vue")}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3 font-gothic text-[13px] uppercase tracking-[0.18em] text-ink hover:text-shu-deep dark:hover:text-shu transition-colors"
             >
               {content.hero.ctaGithub}
             </a>

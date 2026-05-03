@@ -13,6 +13,7 @@ import {
   RECOMMENDED_CSS,
   Section,
   SnippetBlock,
+  stripMd,
 } from "@/components/tcy/shared";
 import { localePath, type Locale } from "@/lib/locale";
 import langJa from "@private/lang/pages/ja/index.json";
@@ -41,7 +42,7 @@ export default async function LandingView({ locale }: { locale: Locale }) {
     <div className="relative">
       <Meta
         title={`${content.hero.heading} - ${content.hero.eyebrow}`}
-        description={content.hero.tagline}
+        description={stripMd(content.hero.tagline)}
         image={`/api/og?title=${encodeURIComponent(content.hero.heading)}&eyebrow=${encodeURIComponent(content.hero.eyebrow)}`}
         url={url}
         lang={locale}
@@ -67,7 +68,7 @@ export default async function LandingView({ locale }: { locale: Locale }) {
             </h1>
 
             <p className="font-gothic text-lg text-ink leading-[1.85] max-w-xl mb-8">
-              {content.hero.tagline}
+              <InlineMd text={content.hero.tagline} />
             </p>
 
             <div className="flex flex-wrap gap-2 mb-10">
