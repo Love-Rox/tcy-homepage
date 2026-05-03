@@ -11,4 +11,4 @@ export default function NotFound() {
   );
 }
 
-export const getConfig = async () => ({ render: "static" } as const);
+export const getConfig = async () => ({ render: "static" }) as const;

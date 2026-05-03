@@ -3,9 +3,9 @@
   "name": "tcy-homepage",
   "main": "./src/waku.server",
   // nodejs_als: required for Waku's server-side request context (AsyncLocalStorage).
-  // (rox-homepage also enables nodejs_compat for mermaid → vscode-jsonrpc, but tcy-homepage
-  // does not bundle mermaid so we omit it.)
-  "compatibility_flags": ["nodejs_als"],
+  // nodejs_compat: required by gray-matter (fs) and vfile (node:url/path/process) which
+  // markdown-loader pulls in. The build warns "Unexpected Node.js imports" without it.
+  "compatibility_flags": ["nodejs_als", "nodejs_compat"],
   // https://developers.cloudflare.com/workers/platform/compatibility-dates
   "compatibility_date": "2025-11-17",
   "assets": {

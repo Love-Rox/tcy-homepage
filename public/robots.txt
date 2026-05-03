@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /RSC/
+
+Sitemap: https://tcy.love-rox.cc/sitemap.xml

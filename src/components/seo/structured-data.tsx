@@ -107,9 +107,7 @@ export const ArticleSchema = ({
     headline: title,
     description,
     url: url.startsWith("http") ? url : `${SITE_URL}${url}`,
-    ...(image
-      ? { image: image.startsWith("http") ? image : `${SITE_URL}${image}` }
-      : {}),
+    ...(image ? { image: image.startsWith("http") ? image : `${SITE_URL}${image}` } : {}),
     ...(datePublished && { datePublished }),
     ...(dateModified && { dateModified }),
     author: { "@type": "Organization", name: author },

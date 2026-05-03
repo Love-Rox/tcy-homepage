@@ -40,9 +40,7 @@ export default function ErrorPage({
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24 min-h-[60vh] flex flex-col items-center justify-center text-center">
       <Meta title={`${title} - ${t.titleSuffix}`} description={message} />
 
-      {code && (
-        <p className="text-6xl font-bold text-primary-500 mb-4 font-mono">{code}</p>
-      )}
+      {code && <p className="text-6xl font-bold text-primary-500 mb-4 font-mono">{code}</p>}
 
       <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
         {title}

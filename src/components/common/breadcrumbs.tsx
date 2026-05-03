@@ -1,4 +1,5 @@
 import { Link } from "waku";
+import { localePath, type Locale } from "@/lib/locale";
 
 interface BreadcrumbItem {
   label: string;
@@ -7,24 +8,25 @@ interface BreadcrumbItem {
 
 interface BreadcrumbsProps {
   items: BreadcrumbItem[];
-  lang: "en" | "ja";
+  lang: Locale;
 }
 
-const homeLabels = {
+const homeLabels: Record<Locale, string> = {
   en: "Home",
   ja: "ホーム",
 };
 
 export const Breadcrumbs = ({ items, lang }: BreadcrumbsProps) => {
-  // Prepend home
-  const allItems: BreadcrumbItem[] = [{ label: homeLabels[lang], href: `/${lang}` }, ...items];
+  const allItems: BreadcrumbItem[] = [
+    { label: homeLabels[lang], href: localePath(lang, "") },
+    ...items,
+  ];
 
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
       <ol className="flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
         {allItems.map((item, index) => {
           const isLast = index === allItems.length - 1;
-
           return (
             <li key={index} className="flex items-center gap-2">
               {index > 0 && (
@@ -55,15 +57,12 @@ export const Breadcrumbs = ({ items, lang }: BreadcrumbsProps) => {
   );
 };
 
-// Helper function to generate breadcrumb schema items
 export const generateBreadcrumbItems = (
   items: BreadcrumbItem[],
-  lang: "en" | "ja",
+  lang: Locale,
 ): { name: string; url: string }[] => {
-  const homeItem = { name: homeLabels[lang], url: `/${lang}` };
-  const schemaItems = items.map((item) => ({
-    name: item.label,
-    url: item.href || "",
-  }));
-  return [homeItem, ...schemaItems];
+  return [
+    { name: homeLabels[lang], url: localePath(lang, "") },
+    ...items.map((item) => ({ name: item.label, url: item.href || "" })),
+  ];
 };
