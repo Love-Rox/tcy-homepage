@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Tate-chu-yoko 縦中横 seal mark — kinari ground, shu seal,
-     three Kanji 縦/中/横 stacked vertically in Mincho-flavoured outlines. -->
+<!--
+  tate-chu-yoko favicon — 縦 seal mark.
+  A bold single-character 落款印: cream Mincho 「縦」 sized to fill a deep shu
+  square. Reads cleanly even at 16×16 / 32×32 because there is exactly one
+  glyph carrying the mark. Local Shippori Mincho B1 → Yu Mincho → serif.
+-->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="2" fill="#f4ede2"/>
-  <rect x="8" y="8" width="48" height="48" rx="1" fill="#c8442f"/>
-  <rect x="8" y="8" width="48" height="48" rx="1" fill="none" stroke="#a83626" stroke-width="0.6"/>
-  <g fill="#f4ede2" font-family="Shippori Mincho B1, Yu Mincho, serif" font-weight="700" font-size="14" text-anchor="middle">
-    <text x="32" y="22">縦</text>
-    <text x="32" y="38">中</text>
-    <text x="32" y="54">横</text>
-  </g>
+  <rect width="64" height="64" rx="3" fill="#c8442f"/>
+  <rect x="2" y="2" width="60" height="60" rx="2" fill="none" stroke="#f4ede2" stroke-width="0.75" opacity="0.55"/>
+  <text
+    x="50%"
+    y="51%"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="'Shippori Mincho B1', 'Yu Mincho', 'Hiragino Mincho ProN', serif"
+    font-weight="800"
+    font-size="62"
+    fill="#f4ede2"
+  >縦</text>
 </svg>

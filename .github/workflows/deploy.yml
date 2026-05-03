@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Weekly rebuild so the prebuild step (scripts/fetch-versions.ts) picks up
+  # any new @love-rox/tcy-* npm releases without anyone pushing a commit.
+  # Mondays 06:00 UTC ≈ Mon 15:00 JST. Adjust to "0 6 * * *" for daily.
+  schedule:
+    - cron: "0 6 * * 1"
 
 # Only one deploy at a time; cancel in-flight runs when a newer commit lands on main.
 concurrency:
