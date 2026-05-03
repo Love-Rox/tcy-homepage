@@ -1,4 +1,5 @@
 import { localePath, type Locale } from "@/lib/locale";
+import { SealMark } from "@/components/tcy/shared";
 import footerEn from "@private/lang/components/global/en/footer.json";
 import footerJa from "@private/lang/components/global/ja/footer.json";
 
@@ -9,20 +10,26 @@ export const Footer = ({ lang = "ja" }: { lang?: Locale }) => {
   const link = (suffix: string) => localePath(lang, suffix);
 
   return (
-    <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-2">
-            <p className="font-mono text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">
+    <footer className="relative mt-32">
+      {/* shu top rule — punctuates the page like a colophon line */}
+      <span aria-hidden="true" className="block h-px w-full bg-shu" />
+
+      <div className="px-6 lg:px-12 py-16">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10">
+          {/* Wordmark + tagline (5 cols) */}
+          <div className="md:col-span-5">
+            <p className="font-mincho text-3xl text-ink leading-none mb-3">縦中横</p>
+            <p className="font-mono text-[11px] text-ink-mute tracking-[0.18em] mb-5">
               tate-chu-yoko
             </p>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="font-gothic text-sm text-ink-mute leading-relaxed max-w-md">
               {content.tagline}
             </p>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-4">
+          {/* Packages column (3 cols) */}
+          <div className="md:col-span-3">
+            <h3 className="font-gothic text-[10px] uppercase tracking-[0.25em] text-ink-soft mb-4">
               {content.sections.packages}
             </h3>
             <ul className="space-y-2">
@@ -30,7 +37,7 @@ export const Footer = ({ lang = "ja" }: { lang?: Locale }) => {
                 <li key={slug || "core"}>
                   <a
                     href={link(slug)}
-                    className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 font-mono"
+                    className="font-mono text-[13px] text-ink-mute hover:text-shu-deep dark:hover:text-shu transition-colors"
                   >
                     {slug ? `tcy-${slug}` : "tcy-core"}
                   </a>
@@ -39,15 +46,16 @@ export const Footer = ({ lang = "ja" }: { lang?: Locale }) => {
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-4">
+          {/* Links column (3 cols) */}
+          <div className="md:col-span-3">
+            <h3 className="font-gothic text-[10px] uppercase tracking-[0.25em] text-ink-soft mb-4">
               {content.sections.community}
             </h3>
             <ul className="space-y-2">
               <li>
                 <a
                   href={link("demo")}
-                  className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="font-gothic text-sm text-ink-mute hover:text-shu-deep dark:hover:text-shu transition-colors"
                 >
                   {content.links.demo}
                 </a>
@@ -55,7 +63,7 @@ export const Footer = ({ lang = "ja" }: { lang?: Locale }) => {
               <li>
                 <a
                   href={link("blog")}
-                  className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="font-gothic text-sm text-ink-mute hover:text-shu-deep dark:hover:text-shu transition-colors"
                 >
                   {content.links.blog}
                 </a>
@@ -65,7 +73,7 @@ export const Footer = ({ lang = "ja" }: { lang?: Locale }) => {
                   href="https://github.com/Love-Rox/tate-chu-yoko"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="font-gothic text-sm text-ink-mute hover:text-shu-deep dark:hover:text-shu transition-colors"
                 >
                   GitHub
                 </a>
@@ -73,24 +81,33 @@ export const Footer = ({ lang = "ja" }: { lang?: Locale }) => {
               <li>
                 <a
                   href="https://love-rox.cc"
-                  className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="font-gothic text-sm text-ink-mute hover:text-shu-deep dark:hover:text-shu transition-colors"
                 >
                   {content.links.rox}
                 </a>
               </li>
             </ul>
           </div>
+
+          {/* Seal — 1 cols on the lower-right margin */}
+          <div className="md:col-span-1 flex md:justify-end items-end">
+            <SealMark label="縦中横" size={48} />
+          </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-slate-600 dark:text-slate-400">{content.copyright}</p>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+        {/* Bottom bar */}
+        <div
+          className="max-w-6xl mx-auto mt-16 pt-5 flex flex-col sm:flex-row justify-between items-baseline gap-2"
+          style={{ borderTop: "1px solid var(--color-rule)" }}
+        >
+          <p className="font-mono text-[11px] text-ink-soft tracking-wider">{content.copyright}</p>
+          <p className="font-gothic text-[11px] text-ink-soft">
             {content.builtWith}{" "}
             <a
               href="https://waku.gg"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary-600 dark:text-primary-400 hover:underline"
+              className="text-ink-mute hover:text-shu-deep dark:hover:text-shu underline decoration-rule underline-offset-4 transition-colors"
             >
               Waku
             </a>
