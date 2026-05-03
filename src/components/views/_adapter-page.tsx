@@ -21,6 +21,7 @@ import {
   stripMd,
 } from "@/components/tcy/shared";
 import { localePath, type Locale } from "@/lib/locale";
+import { VERSIONS } from "@/lib/versions";
 
 export interface AdapterUsageBlock {
   /** Sub-heading shown above the snippet (omit for the first snippet which uses
@@ -97,7 +98,7 @@ export default async function AdapterPage({
         )}
       />
 
-      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-10 lg:pt-14">
+      <div className="px-5 sm:px-6 lg:px-12 max-w-6xl mx-auto pt-8 sm:pt-10 lg:pt-14">
         <Breadcrumbs
           items={[
             { label: landing.hero.heading, href: familyUrl },
@@ -107,7 +108,7 @@ export default async function AdapterPage({
         />
       </div>
 
-      <div className="px-6 lg:px-12 pl-6 lg:pl-20 max-w-6xl mx-auto pb-24">
+      <div className="px-5 sm:px-6 lg:px-12 lg:pl-20 max-w-6xl mx-auto pb-20 sm:pb-24">
         <AdapterNav current={adapterKey} locale={locale} />
 
         {/* —— hero ——————————————————————————————————————————————— */}
@@ -128,7 +129,7 @@ export default async function AdapterPage({
           </p>
 
           <div className="flex flex-wrap gap-2 mb-10">
-            <Badge>{content.hero.version}</Badge>
+            <Badge>v{VERSIONS[adapterKey]}</Badge>
             <Badge>MIT</Badge>
             <Badge>{thirdBadge}</Badge>
           </div>

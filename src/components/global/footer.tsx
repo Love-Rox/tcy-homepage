@@ -14,7 +14,7 @@ export const Footer = ({ lang = "ja" }: { lang?: Locale }) => {
       {/* shu top rule — punctuates the page like a colophon line */}
       <span aria-hidden="true" className="block h-px w-full bg-shu" />
 
-      <div className="px-6 lg:px-12 py-16">
+      <div className="px-5 sm:px-6 lg:px-12 py-12 sm:py-16">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10">
           {/* Wordmark + tagline (5 cols) */}
           <div className="md:col-span-5">

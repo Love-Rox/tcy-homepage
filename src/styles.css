@@ -38,6 +38,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* —— breakpoints —— */
+  /* Add an `xs:` step at 380px for the very smallest phones — used by the
+     header wordmark to drop the secondary "tate-chu-yoko" caption when there
+     isn't room. */
+  --breakpoint-xs: 380px;
+
   /* —— colour —— */
   /* sumi 墨 (warm near-black) */
   --color-ink: #1a1815;

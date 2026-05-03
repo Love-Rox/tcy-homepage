@@ -171,10 +171,10 @@ export function DemoPlayground({ lang }: { lang: Lang }) {
         .tcy-demo-scope .tcy-page-vertical {
           writing-mode: vertical-rl;
           font-family: "Shippori Mincho B1", "Yu Mincho", serif;
-          font-size: 1.5rem;
+          font-size: clamp(1.15rem, 4.5vw, 1.5rem);
           line-height: 2.1;
           font-weight: 500;
-          height: 22rem;
+          height: clamp(16rem, 50vw, 22rem);
           overflow-x: auto;
           padding: 0.75rem 0.5rem;
         }

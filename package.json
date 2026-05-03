@@ -10,6 +10,8 @@
     "deploy": "wrangler deploy",
     "cf-typegen": "wrangler types",
     "generate-seo": "bun run scripts/generate-seo-files.ts",
+    "versions": "bun run scripts/fetch-versions.ts",
+    "prebuild": "bun run versions",
     "lint": "vp check",
     "fmt": "vp fmt",
     "test": "bun test"

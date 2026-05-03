@@ -14,6 +14,7 @@ import {
   stripMd,
 } from "@/components/tcy/shared";
 import { localePath, type Locale } from "@/lib/locale";
+import { VERSIONS } from "@/lib/versions";
 import langJa from "@private/lang/pages/ja/index.json";
 import langEn from "@private/lang/pages/en/index.json";
 
@@ -53,7 +54,7 @@ export default async function LandingView({ locale }: { locale: Locale }) {
           column (7/12 on lg+), large type, and a faint giant 「縦」 watermark
           behind it. The horizontal metadata + CTAs sit on the left in a
           narrower column. Reader is met by typography first. */}
-      <section className="relative px-6 lg:px-12 pt-12 pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
+      <section className="relative px-5 sm:px-6 lg:px-12 pt-10 pb-16 sm:pt-12 sm:pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
         <div className="max-w-6xl mx-auto grid grid-cols-12 gap-x-6 lg:gap-x-16 items-start">
           {/* Left column: eyebrow + heading + tagline + badges + CTAs (narrower) */}
           <div className="col-span-12 lg:col-span-5 wa-fade-up" style={{ animationDelay: "120ms" }}>
@@ -65,7 +66,7 @@ export default async function LandingView({ locale }: { locale: Locale }) {
                 glyphs sitting upright next to vertical-friendly Kanji.
                 aria-label feeds screen readers the canonical romaji. */}
             <h1
-              className="font-mincho text-[3.5rem] sm:text-[4.75rem] lg:text-[5.5rem] leading-none tracking-tight text-ink mb-3"
+              className="font-mincho text-[3rem] xs:text-[3.5rem] sm:text-[4.75rem] lg:text-[5.5rem] leading-none tracking-tight text-ink mb-3"
               aria-label="tate-chu-yoko"
             >
               <ruby className="ruby-display">
@@ -83,7 +84,7 @@ export default async function LandingView({ locale }: { locale: Locale }) {
             </p>
 
             <div className="flex flex-wrap gap-2 mb-10">
-              <Badge>{content.hero.badges.version}</Badge>
+              <Badge>v{VERSIONS.core}</Badge>
               <Badge>{content.hero.badges.license}</Badge>
               <Badge>{content.hero.badges.ssr}</Badge>
             </div>
@@ -117,7 +118,7 @@ export default async function LandingView({ locale }: { locale: Locale }) {
             style={{ animationDelay: "320ms" }}
           >
             <figure
-              className="relative px-8 lg:px-12 py-2"
+              className="relative px-5 sm:px-8 lg:px-12 py-2 overflow-hidden"
               style={{
                 borderLeft: "1px solid var(--color-rule)",
                 borderRight: "1px solid var(--color-rule)",
@@ -126,24 +127,25 @@ export default async function LandingView({ locale }: { locale: Locale }) {
               {/* shu chapter accent on the left rule */}
               <span
                 aria-hidden="true"
-                className="absolute -left-px top-0 w-px h-20 bg-shu wa-rule-draw"
+                className="absolute -left-px top-0 w-px h-16 sm:h-20 bg-shu wa-rule-draw"
               />
 
-              {/* Atmospheric watermark — giant 縦 in shu-wash. Massive, faint,
-                  positioned to bleed off the upper-right edge of the page. */}
+              {/* Atmospheric watermark — giant 縦 in shu-wash. Clamps with
+                  viewport so it doesn't blow past mobile screens. */}
               <span
                 aria-hidden="true"
-                className="absolute -top-12 -right-8 font-mincho text-shu-wash select-none pointer-events-none leading-none"
-                style={{ fontSize: "26rem", opacity: 0.55 }}
+                className="absolute -top-6 sm:-top-12 -right-4 sm:-right-8 font-mincho text-shu-wash select-none pointer-events-none leading-none"
+                style={{ fontSize: "clamp(13rem, 55vw, 26rem)", opacity: 0.55 }}
               >
                 縦
               </span>
 
-              {/* Tiny vertical caption in the right gutter — runs the same
-                  direction as the body, frames the sample as "live". */}
+              {/* Tiny vertical caption in the right gutter. Hidden on the
+                  smallest screens where it competes for space with the
+                  watermark. */}
               <span
                 aria-hidden="true"
-                className="absolute right-2 top-2 font-gothic text-[10px] uppercase tracking-[0.4em] text-ink-soft select-none"
+                className="hidden sm:block absolute right-2 top-2 font-gothic text-[10px] uppercase tracking-[0.4em] text-ink-soft select-none"
                 style={{ writingMode: "vertical-rl" }}
               >
                 live · vertical
@@ -153,9 +155,9 @@ export default async function LandingView({ locale }: { locale: Locale }) {
                 <p
                   className="tcy-vertical text-ink relative"
                   style={{
-                    fontSize: "2.4rem",
+                    fontSize: "clamp(1.65rem, 5.5vw, 2.4rem)",
                     lineHeight: 2.05,
-                    height: "30rem",
+                    height: "clamp(22rem, 65vw, 30rem)",
                     fontWeight: 500,
                     letterSpacing: "0.02em",
                   }}
@@ -167,9 +169,12 @@ export default async function LandingView({ locale }: { locale: Locale }) {
 
             {/* Caption strip below the figure: <Tcy>...</Tcy> in mono with a
                 small shu seal on the right marking it as the page's signature. */}
-            <figcaption className="mt-6 flex items-baseline gap-4 px-8 lg:px-12">
-              <span aria-hidden="true" className="block w-4 h-px bg-shu translate-y-[-3px]" />
-              <p className="font-mono text-[11px] text-ink-mute break-all flex-1">
+            <figcaption className="mt-6 flex items-baseline gap-3 px-5 sm:px-8 lg:px-12">
+              <span
+                aria-hidden="true"
+                className="block w-4 h-px bg-shu translate-y-[-3px] flex-shrink-0"
+              />
+              <p className="font-mono text-[10px] sm:text-[11px] text-ink-mute break-all flex-1">
                 {`<Tcy>${HERO_SAMPLE}</Tcy>`}
               </p>
             </figcaption>
@@ -180,7 +185,7 @@ export default async function LandingView({ locale }: { locale: Locale }) {
       {/* No breadcrumbs on the landing — the page IS home; rendering a
           "Home / tate-chu-yoko" trail just doubles up the title. */}
 
-      <div className="px-6 lg:px-12 pl-6 lg:pl-20 max-w-6xl mx-auto pb-24">
+      <div className="px-5 sm:px-6 lg:px-12 lg:pl-20 max-w-6xl mx-auto pb-20 sm:pb-24">
         {/* —— Problem ——————————————————————————————————————————————— */}
         <Section n={1} eyebrow="Why" heading={content.problem.heading}>
           <Prose>{content.problem.body}</Prose>
@@ -208,7 +213,7 @@ export default async function LandingView({ locale }: { locale: Locale }) {
                     {coreItem.name}
                   </p>
                   <p className="font-mono text-[11px] text-ink-soft tracking-wider mt-1">
-                    {coreItem.version}
+                    v{VERSIONS.core}
                   </p>
                 </div>
                 <div className="col-span-12 sm:col-span-8">

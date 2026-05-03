@@ -64,7 +64,7 @@ export default async function BlogPostView({ locale, slug }: { locale: Locale; s
         author={content.metadata.author || "Love-Rox"}
       />
 
-      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-10 lg:pt-14">
+      <div className="px-5 sm:px-6 lg:px-12 max-w-6xl mx-auto pt-8 sm:pt-10 lg:pt-14">
         <Breadcrumbs
           items={[
             { label: indexData.title, href: localePath(locale, "blog") },
@@ -74,11 +74,11 @@ export default async function BlogPostView({ locale, slug }: { locale: Locale; s
         />
       </div>
 
-      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-6 pb-24">
-        <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu max-w-3xl mx-auto mb-5">
+      <div className="px-5 sm:px-6 lg:px-12 max-w-6xl mx-auto pt-5 sm:pt-6 pb-20 sm:pb-24">
+        <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu max-w-3xl mx-auto mb-4 sm:mb-5">
           {indexData.title}
         </p>
-        <h1 className="font-mincho text-[2.25rem] sm:text-[3rem] lg:text-[3.75rem] leading-[1.15] text-ink mb-10 max-w-3xl mx-auto">
+        <h1 className="font-mincho text-[2rem] sm:text-[2.75rem] lg:text-[3.75rem] leading-[1.2] sm:leading-[1.15] text-ink mb-8 sm:mb-10 max-w-3xl mx-auto">
           {content.metadata.title}
         </h1>
 

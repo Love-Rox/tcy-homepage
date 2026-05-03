@@ -127,20 +127,22 @@ export function Section({
   className?: string;
 }) {
   return (
-    <section className={`relative mb-20 ${className}`}>
-      <header className="mb-8">
+    <section className={`relative mb-14 sm:mb-20 ${className}`}>
+      <header className="mb-6 sm:mb-8">
         {n !== undefined && (
           <div className="absolute -left-12 top-0 hidden lg:block">
             <ChapterNumber n={n} />
           </div>
         )}
         {eyebrow && (
-          <p className="font-gothic text-xs uppercase tracking-[0.25em] text-ink-mute mb-3">
+          <p className="font-gothic text-[11px] sm:text-xs uppercase tracking-[0.25em] text-ink-mute mb-3">
             {eyebrow}
           </p>
         )}
-        <h2 className="font-mincho text-3xl sm:text-4xl text-ink leading-tight">{heading}</h2>
-        <span aria-hidden="true" className="block h-px w-12 bg-shu mt-5" />
+        <h2 className="font-mincho text-2xl sm:text-3xl lg:text-4xl text-ink leading-tight">
+          {heading}
+        </h2>
+        <span aria-hidden="true" className="block h-px w-10 sm:w-12 bg-shu mt-4 sm:mt-5" />
       </header>
       {children}
     </section>
@@ -349,42 +351,49 @@ export function InstallCommands({ pkg }: { pkg: string }) {
   );
 }
 
-/** Adapter switcher: horizontal table-of-contents with shu underline on the active item. */
+/** Adapter switcher: horizontal table-of-contents with shu underline on the
+ *  active item. Scrolls horizontally on small screens (no awkward wrapping
+ *  that splits the hairline-separator pattern across rows). */
 export function AdapterNav({ current, locale }: { current: AdapterKey; locale: Locale }) {
   return (
-    <nav aria-label="tate-chu-yoko packages" className="mb-12">
-      <ul className="flex flex-wrap items-stretch text-sm">
-        {ADAPTERS.map((a, i) => {
-          const active = a.key === current;
-          return (
-            <li
-              key={a.key}
-              className="flex items-stretch"
-              style={i > 0 ? { borderLeft: "1px solid var(--color-rule)" } : {}}
-            >
-              <Link
-                to={a.href(locale) as `/${string}`}
-                className={[
-                  "flex items-center gap-2 px-4 py-2 font-mono text-[13px] transition-colors relative",
-                  active
-                    ? "text-ink font-medium"
-                    : "text-ink-mute hover:text-ink dark:hover:text-ink",
-                ].join(" ")}
+    <nav
+      aria-label="tate-chu-yoko packages"
+      className="mb-10 sm:mb-12 -mx-5 sm:mx-0 overflow-x-auto"
+    >
+      <div className="inline-block min-w-full px-5 sm:px-0">
+        <ul className="flex items-stretch text-sm">
+          {ADAPTERS.map((a, i) => {
+            const active = a.key === current;
+            return (
+              <li
+                key={a.key}
+                className="flex items-stretch flex-shrink-0"
+                style={i > 0 ? { borderLeft: "1px solid var(--color-rule)" } : {}}
               >
-                <span>{a.short}</span>
-                {a.isNew && <NewBadge />}
-                {active && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute left-4 right-4 -bottom-px h-px bg-shu"
-                  />
-                )}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-      <span aria-hidden="true" className="block h-px w-full bg-rule" />
+                <Link
+                  to={a.href(locale) as `/${string}`}
+                  className={[
+                    "flex items-center gap-2 px-3 sm:px-4 py-2 font-mono text-[13px] whitespace-nowrap transition-colors relative",
+                    active
+                      ? "text-ink font-medium"
+                      : "text-ink-mute hover:text-ink dark:hover:text-ink",
+                  ].join(" ")}
+                >
+                  <span>{a.short}</span>
+                  {a.isNew && <NewBadge />}
+                  {active && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-3 right-3 sm:left-4 sm:right-4 -bottom-px h-px bg-shu"
+                    />
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+        <span aria-hidden="true" className="block h-px w-full bg-rule" />
+      </div>
     </nav>
   );
 }

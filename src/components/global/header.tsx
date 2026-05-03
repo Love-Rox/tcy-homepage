@@ -26,7 +26,7 @@ export const Header = ({ lang, navItems = [] }: HeaderProps) => {
 
       <nav
         aria-label="Global"
-        className="flex items-center justify-between gap-6 px-6 lg:px-12 py-5"
+        className="flex items-center justify-between gap-4 sm:gap-6 px-5 sm:px-6 lg:px-12 py-4 sm:py-5"
       >
         {/* Wordmark — Mincho display + small shu rule + reading hint */}
         <a
@@ -34,8 +34,8 @@ export const Header = ({ lang, navItems = [] }: HeaderProps) => {
           className="group flex items-baseline gap-3 -ml-1 px-1 transition-opacity hover:opacity-80"
         >
           <span className="font-mincho text-xl text-ink leading-none">縦中横</span>
-          <span aria-hidden="true" className="block w-px h-4 bg-shu" />
-          <span className="font-mono text-[11px] text-ink-mute tracking-[0.18em]">
+          <span aria-hidden="true" className="hidden xs:block w-px h-4 bg-shu" />
+          <span className="hidden xs:inline font-mono text-[11px] text-ink-mute tracking-[0.18em]">
             tate-chu-yoko
           </span>
         </a>

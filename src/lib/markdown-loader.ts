@@ -54,6 +54,15 @@ function keyPrefix(type: "blog" | "docs", locale: "en" | "ja"): string {
   return `../../private/contents/${type}/${locale}/`;
 }
 
+// Strip the first leading <h1>…</h1> from the rendered HTML. Authors typically
+// repeat the title at the top of the body ("# Title") even though the same
+// string is already in the frontmatter and gets rendered as the page heading
+// by the view. Removing it here keeps existing posts intact while avoiding
+// the visible duplication.
+function stripLeadingH1(html: string): string {
+  return html.replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, "");
+}
+
 async function processMarkdown(raw: string): Promise<MarkdownContent> {
   const { data, content } = matter(raw);
 
@@ -67,7 +76,7 @@ async function processMarkdown(raw: string): Promise<MarkdownContent> {
   return {
     metadata: data as MarkdownMetadata,
     content,
-    html: processedContent.toString(),
+    html: stripLeadingH1(processedContent.toString()),
   };
 }
 

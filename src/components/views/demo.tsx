@@ -52,19 +52,19 @@ export default async function DemoView({ locale }: { locale: Locale }) {
         )}
       />
 
-      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-10 lg:pt-14">
+      <div className="px-5 sm:px-6 lg:px-12 max-w-6xl mx-auto pt-8 sm:pt-10 lg:pt-14">
         <Breadcrumbs
           items={[{ label: content.packageLabel, href: packageUrl }, { label: content.demoLabel }]}
           lang={locale}
         />
       </div>
 
-      <div className="px-6 lg:px-12 pl-6 lg:pl-20 max-w-6xl mx-auto pb-24">
+      <div className="px-5 sm:px-6 lg:px-12 lg:pl-20 max-w-6xl mx-auto pb-20 sm:pb-24">
         <header className="mb-14 wa-fade-up" style={{ animationDelay: "120ms" }}>
           <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu mb-5">
             {content.eyebrow}
           </p>
-          <h1 className="font-mincho text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem] leading-[1.1] text-ink mb-6 max-w-3xl">
+          <h1 className="font-mincho text-[2rem] sm:text-[2.75rem] lg:text-[3.5rem] leading-[1.15] text-ink mb-5 sm:mb-6 max-w-3xl">
             {content.heading}
           </h1>
           <p className="font-gothic text-base text-ink-mute leading-[1.85] max-w-2xl">

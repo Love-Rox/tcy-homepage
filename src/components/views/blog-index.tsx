@@ -69,16 +69,16 @@ export default async function BlogIndexView({ locale }: { locale: Locale }) {
         )}
       />
 
-      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-10 lg:pt-14">
+      <div className="px-5 sm:px-6 lg:px-12 max-w-6xl mx-auto pt-8 sm:pt-10 lg:pt-14">
         <Breadcrumbs items={[{ label: indexData.title }]} lang={locale} />
       </div>
 
-      <div className="px-6 lg:px-12 pl-6 lg:pl-20 max-w-6xl mx-auto pb-24">
+      <div className="px-5 sm:px-6 lg:px-12 lg:pl-20 max-w-6xl mx-auto pb-20 sm:pb-24">
         <header className="mb-16 wa-fade-up" style={{ animationDelay: "120ms" }}>
           <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu mb-5">
             {indexData.eyebrow}
           </p>
-          <h1 className="font-mincho text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem] leading-[1.1] text-ink mb-6 max-w-3xl">
+          <h1 className="font-mincho text-[2rem] sm:text-[2.75rem] lg:text-[3.5rem] leading-[1.15] text-ink mb-5 sm:mb-6 max-w-3xl">
             {indexData.title}
           </h1>
           <p className="font-gothic text-base text-ink-mute leading-[1.85] max-w-2xl">
@@ -99,11 +99,11 @@ export default async function BlogIndexView({ locale }: { locale: Locale }) {
             >
               <Link
                 to={localePath(locale, `blog/${post.slug}`)}
-                className="group grid grid-cols-12 gap-x-6 py-7 transition-colors"
+                className="group grid grid-cols-12 gap-x-6 py-6 sm:py-7 transition-colors"
               >
                 <time
                   dateTime={post.date}
-                  className="col-span-12 sm:col-span-3 font-mono text-[11px] uppercase tracking-wider text-ink-soft pt-1.5"
+                  className="col-span-12 sm:col-span-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-ink-soft mb-2 sm:mb-0 sm:pt-1.5"
                 >
                   {new Date(post.date).toLocaleDateString(locale, {
                     year: "numeric",
@@ -112,7 +112,7 @@ export default async function BlogIndexView({ locale }: { locale: Locale }) {
                   })}
                 </time>
                 <div className="col-span-12 sm:col-span-9">
-                  <h2 className="font-mincho text-2xl sm:text-3xl text-ink leading-snug mb-2 group-hover:text-shu-deep dark:group-hover:text-shu transition-colors">
+                  <h2 className="font-mincho text-xl sm:text-2xl lg:text-3xl text-ink leading-snug mb-2 group-hover:text-shu-deep dark:group-hover:text-shu transition-colors">
                     {post.title}
                   </h2>
                   {post.excerpt && (
