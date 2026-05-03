@@ -9,20 +9,22 @@ const copy = {
   en: {
     packageLabel: "tate-chu-yoko",
     demoLabel: "Demo",
-    heading: "tate-chu-yoko — Interactive demo",
+    eyebrow: "Interactive demo",
+    heading: "Set the controls. Read the spread.",
     description:
-      "Tweak the options and watch the vertical text rerender. The raw side shows what you get without the library; the uprighted side shows the same text wrapped by <Tcy>.",
-    backToPackage: "← Back to package overview",
-    metaTitle: "tate-chu-yoko demo",
+      "Two vertical pages, side by side. The left is plain. The right is wrapped by <Tcy>. Adjust the controls below and watch the right page reflow in real time.",
+    backToPackage: "← Back to overview",
+    metaTitle: "tate-chu-yoko — interactive demo",
   },
   ja: {
     packageLabel: "tate-chu-yoko",
     demoLabel: "デモ",
-    heading: "tate-chu-yoko — インタラクティブデモ",
+    eyebrow: "インタラクティブ・デモ",
+    heading: "操作盤を動かして、見開きを読む。",
     description:
-      "オプションを変えると縦組みのプレビューがその場で更新されます。左は未処理、右は <Tcy> で包んだ出力です。",
+      "縦組みの頁を 2 つ、左に素のまま、右に <Tcy> で包んだ姿で並べました。下の操作盤を動かすと、右の頁が即時に組み直されます。",
     backToPackage: "← パッケージ紹介に戻る",
-    metaTitle: "tate-chu-yoko デモ",
+    metaTitle: "tate-chu-yoko — インタラクティブ・デモ",
   },
 } as const;
 
@@ -32,10 +34,10 @@ export default async function DemoView({ locale }: { locale: Locale }) {
   const packageUrl = localePath(locale, "");
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
+    <div className="relative">
       <Meta
         title={content.metaTitle}
-        description={content.description}
+        description={content.description.replace(/<\/?[^>]+>/g, "")}
         image={`/api/og?title=${encodeURIComponent(content.metaTitle)}&eyebrow=${encodeURIComponent(content.packageLabel + " · " + content.demoLabel)}`}
         url={url}
         lang={locale}
@@ -49,25 +51,35 @@ export default async function DemoView({ locale }: { locale: Locale }) {
           locale,
         )}
       />
-      <Breadcrumbs
-        items={[{ label: content.packageLabel, href: packageUrl }, { label: content.demoLabel }]}
-        lang={locale}
-      />
 
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-slate-100 mb-3">
+      <div className="px-6 lg:px-12 max-w-6xl mx-auto pt-10 lg:pt-14">
+        <Breadcrumbs
+          items={[{ label: content.packageLabel, href: packageUrl }, { label: content.demoLabel }]}
+          lang={locale}
+        />
+      </div>
+
+      <div className="px-6 lg:px-12 pl-6 lg:pl-20 max-w-6xl mx-auto pb-24">
+        <header className="mb-14 wa-fade-up" style={{ animationDelay: "120ms" }}>
+          <p className="font-gothic text-[11px] uppercase tracking-[0.3em] text-shu-deep dark:text-shu mb-5">
+            {content.eyebrow}
+          </p>
+          <h1 className="font-mincho text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem] leading-[1.1] text-ink mb-6 max-w-3xl">
             {content.heading}
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+          <p className="font-gothic text-base text-ink-mute leading-[1.85] max-w-2xl">
             {content.description}
           </p>
-        </div>
+          <span aria-hidden="true" className="block h-px w-12 bg-shu mt-8" />
+        </header>
 
         <DemoPlayground lang={locale} />
 
-        <div className="mt-10">
-          <Link to={packageUrl} className="text-primary-600 dark:text-primary-400 hover:underline">
+        <div className="mt-16 pt-10" style={{ borderTop: "1px solid var(--color-rule)" }}>
+          <Link
+            to={packageUrl as `/${string}`}
+            className="font-gothic text-sm text-ink-mute hover:text-shu-deep dark:hover:text-shu transition-colors underline decoration-rule decoration-from-font underline-offset-4"
+          >
             {content.backToPackage}
           </Link>
         </div>
