@@ -11,3 +11,8 @@ public/sitemap.xml
 .wrangler
 worker-configuration.d.ts
 .dev.vars
+
+# Claude Code (local agent files; not part of the project)
+.claude/
+CLAUDE.md
+CLAUDE.local.md
