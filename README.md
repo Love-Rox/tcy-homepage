@@ -29,17 +29,17 @@ bun run dev      # Waku dev server
 
 ## よく使うコマンド
 
-| コマンド | 用途 |
-| --- | --- |
-| `bun run dev` | Waku 開発サーバ |
-| `bun run build` | 本番ビルド（`prebuild` で npm から `@love-rox/tcy-*` の最新版を取得） |
-| `bun run start` | ビルド成果物を `wrangler dev` で起動 |
-| `bun run deploy` | `wrangler deploy`（通常は CI が `main` プッシュで実行） |
-| `bun run lint` / `fmt` | `vite-plus` (`vp check` / `vp fmt`) |
-| `bun test` | Bun テストランナー |
-| `bun run versions` | npm レジストリから最新バージョンを取得して `src/lib/versions.ts` を再生成 |
-| `bun run generate-seo` | `public/sitemap.xml` と `public/robots.txt` を再生成 |
-| `bun run cf-typegen` | `wrangler.jsonc` から `worker-configuration.d.ts` を再生成 |
+| コマンド               | 用途                                                                      |
+| ---------------------- | ------------------------------------------------------------------------- |
+| `bun run dev`          | Waku 開発サーバ                                                           |
+| `bun run build`        | 本番ビルド（`prebuild` で npm から `@love-rox/tcy-*` の最新版を取得）     |
+| `bun run start`        | ビルド成果物を `wrangler dev` で起動                                      |
+| `bun run deploy`       | `wrangler deploy`（通常は CI が `main` プッシュで実行）                   |
+| `bun run lint` / `fmt` | `vite-plus` (`vp check` / `vp fmt`)                                       |
+| `bun test`             | Bun テストランナー                                                        |
+| `bun run versions`     | npm レジストリから最新バージョンを取得して `src/lib/versions.ts` を再生成 |
+| `bun run generate-seo` | `public/sitemap.xml` と `public/robots.txt` を再生成                      |
+| `bun run cf-typegen`   | `wrangler.jsonc` から `worker-configuration.d.ts` を再生成                |
 
 ## ディレクトリ構成
 
